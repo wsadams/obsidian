@@ -117,7 +117,7 @@ thead th{padding:9px 7px;text-align:left;font-size:10px;font-weight:600;color:va
 thead th.sortable{cursor:pointer;}thead th.sortable:hover{color:var(--gold);}
 thead th.sort-asc::after{content:' ↑';color:var(--gold);}thead th.sort-desc::after{content:' ↓';color:var(--gold);}
 /* col widths */
-.cd{width:24px;}.cn{width:24px;}.ce{width:22px;}.ck{width:28px;}.cp{width:62px;}.cph{width:86px;}.cpr{width:70px;}.cc{width:100px;}.ct{width:auto;}.co{width:108px;}.cs{width:104px;}.csd{width:80px;}.cdd{width:80px;}.ctm{width:70px;}.cno{width:30px;}.cdl{width:26px;}
+.cd{width:24px;}.cn{width:42px;}.ce{width:22px;}.ck{width:28px;}.cp{width:62px;}.cph{width:86px;}.cpr{width:70px;}.cc{width:100px;}.ct{width:auto;}.co{width:108px;}.cs{width:104px;}.csd{width:80px;}.cdd{width:80px;}.ctm{width:70px;}.cno{width:30px;}.cdl{width:26px;}
 tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .1s;}
 tbody tr:hover{background:rgba(201,168,76,.035);}
 tbody tr:last-child{border-bottom:none;}
@@ -174,6 +174,10 @@ td input[type=date].ci{color-scheme:dark;}
 .overdue{color:#F08080!important;}
 .del-btn{background:none;border:none;color:rgba(231,76,60,.28);cursor:pointer;font-size:12px;padding:2px 3px;border-radius:3px;transition:all .14s;}
 .del-btn:hover{color:#E74C3C;background:rgba(231,76,60,.12);}
+.edit-row-btn{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:12px;padding:2px 4px;border-radius:3px;transition:all .14s;}
+.edit-row-btn:hover{color:var(--gold);background:rgba(201,168,76,.12);}
+.blocker-flag{cursor:help;font-size:12px;}
+.dep-warn{color:#E8A430;font-size:11px;}
 .add-row-btn{width:100%;padding:11px;background:rgba(201,168,76,.03);border:1px dashed rgba(201,168,76,.16);border-top:none;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .16s;border-radius:0 0 12px 12px;}
 .add-row-btn:hover{background:rgba(201,168,76,.09);}
 /* NOTES ICON + POPOVER */
@@ -245,6 +249,10 @@ td input[type=date].ci{color-scheme:dark;}
 .kb-col-hdr .kb-toggle.open{transform:rotate(90deg);}
 .kb-cards{transition:none;overflow:hidden;}
 .kb-cards.collapsed{display:none;}
+
+/* Unsaved changes pulse */
+.btn-unsaved{background:var(--gold);color:var(--navy);animation:pulse-gold 1.8s ease-in-out infinite;}
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.5);}50%{box-shadow:0 0 0 6px rgba(201,168,76,0);}}
 </style>
 </head>
 <body>
@@ -270,13 +278,17 @@ td input[type=date].ci{color-scheme:dark;}
     <div class="sep"></div>
     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('fileInput').click()">⬆ Import</button>
     <input type="file" id="fileInput" accept=".json,.csv" onchange="handleImport(event)">
-    <button class="btn btn-gold btn-sm" onclick="showExportModal()">⬇ Export</button>
+    <button class="btn btn-gold btn-sm" id="exportBtnMain" onclick="showExportModal()" style="position:relative">⬇ Export <span id="unsavedDot" style="display:none;position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:#E05252;border-radius:50%;border:1.5px solid var(--navy);"></span></button>
   </div>
 </header>
 
 <div class="tab-bar" id="tabBar"></div>
 
 <main>
+  <div id="unsavedBanner" style="display:none;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.3);border-radius:8px;padding:10px 16px;margin-bottom:12px;display:none;align-items:center;justify-content:space-between;gap:12px;">
+    <span style="font-size:13px;color:#F08080;">⚠ You have unsaved changes. Export as <strong>data.json</strong> and upload to GitHub so your team sees your updates.</span>
+    <button class="btn btn-sm" style="background:var(--gold);color:var(--navy);flex-shrink:0" onclick="showExportModal()">⬇ Export Now</button>
+  </div>
   <div class="stats-bar" id="statsBar"></div>
 
   <!-- TABLE VIEW -->
@@ -293,24 +305,36 @@ td input[type=date].ci{color-scheme:dark;}
       </select>
       <button class="btn btn-ghost btn-sm" onclick="clearFilters()">✕ Clear</button>
       <button class="btn btn-ghost btn-sm" id="sortToggle" onclick="toggleOrder()">⇅ Order</button>
+      <button class="btn btn-ghost btn-sm" onclick="openPrintView()">🖨 Print / PDF</button>
+    </div>
+    <div id="blockerPanel" style="display:none;margin-bottom:12px;background:rgba(224,82,82,.07);border:1px solid rgba(224,82,82,.25);border-radius:10px;overflow:hidden;">
+      <div style="padding:10px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-bottom:1px solid rgba(224,82,82,.15);" onclick="toggleBlockerPanel()">
+        <span style="font-size:12px;font-weight:600;color:#F08080;text-transform:uppercase;letter-spacing:1.5px;">
+          🚫 <span id="blockerPanelTitle">Blockers & Dependencies</span>
+        </span>
+        <span id="blockerPanelToggle" style="color:#F08080;font-size:11px;opacity:.7">▼ collapse</span>
+      </div>
+      <div id="blockerPanelBody" style="padding:10px 16px 14px;">
+        <div id="blockerPanelContent"></div>
+      </div>
     </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th class="cd">⠿</th><th class="cn">#</th><th class="ce"></th>
+          <th class="cd">⠿</th><th class="cn" title="Stable Task ID">ID</th><th class="ce"></th>
           <th class="ck" title="Done">✓</th>
           <th class="cp" onclick="sortPct()" style="cursor:pointer" title="% Complete">%</th>
           <th class="cph sortable" onclick="sortBy('phase')">Phase</th>
           <th class="cpr sortable" onclick="sortBy('priority')">Pri</th>
           <th class="cc sortable" onclick="sortBy('category')">Category</th>
           <th class="ct sortable" onclick="sortBy('task')">Task</th>
-          <th class="co sortable" onclick="sortBy('owner')">Owner</th>
+          <th class="co sortable" onclick="sortBy('owner')">Assignee(s)</th>
           <th class="cs sortable" onclick="sortBy('status')">Status</th>
           <th class="csd sortable" onclick="sortBy('startDate')">Start</th>
           <th class="cdd sortable" onclick="sortBy('dueDate')">Due</th>
           <th class="ctm">Est.</th>
           <th class="cno" title="Notes">📝</th>
-          <th class="cdl"></th>
+          <th class="cdl" title="Edit all fields">✏</th><th class="cdl"></th>
         </tr></thead>
         <tbody id="taskTbody"></tbody>
       </table>
@@ -355,15 +379,30 @@ td input[type=date].ci{color-scheme:dark;}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="field"><label>Category</label><input type="text" id="fCat" placeholder="e.g. Brand Foundation" list="catDL"><datalist id="catDL"></datalist></div>
-        <div class="field"><label>Assigned To</label><select id="fOwner"></select></div>
+        <div class="field"><label>Assignee(s)</label><div id="fOwnerWrap" style="display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;min-height:38px;cursor:pointer;" onclick="toggleOwnerDropdown()"></div><div id="fOwnerDropdown" style="display:none;position:fixed;z-index:2000;background:#152134;border:1.5px solid var(--gold);border-radius:8px;padding:8px;max-height:200px;overflow-y:auto;width:220px;box-shadow:0 8px 32px rgba(0,0,0,.5);"></div></div>
       </div>
       <div class="field"><label>Task Name</label><input type="text" id="fTask" placeholder="Describe the task…"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
         <div class="field"><label>Start Date</label><input type="date" id="fStart"></div>
         <div class="field"><label>Due Date</label><input type="date" id="fDue"></div>
-        <div class="field"><label>Est. Time</label><input type="text" id="fTime" placeholder="2 weeks…"></div>
+        <div class="field"><label>Est. Time</label>
+          <div style="display:flex;gap:6px">
+            <input type="number" id="fTimeNum" min="0" step="0.5" placeholder="e.g. 2" style="width:80px;flex-shrink:0;padding:8px 11px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;color:var(--offwhite);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+            <select id="fTimeUnit" style="flex:1;padding:8px 11px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;color:var(--offwhite);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+              <option value="hours">Hour(s)</option>
+              <option value="days" selected>Day(s)</option>
+              <option value="weeks">Week(s)</option>
+              <option value="months">Month(s)</option>
+              <option value="ongoing">Ongoing</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="field"><label>Notes</label><textarea id="fNotes" rows="2" placeholder="Status notes, blockers, context…"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>🚫 Blocker</label><input type="text" id="fBlocker" placeholder="What is blocking this task?"></div>
+        <div class="field"><label>🔗 Depends On (Task ID)</label><input type="number" id="fDependsOn" placeholder="Enter task #ID" min="1"></div>
+      </div>
+      <div class="field"><label>Notes</label><textarea id="fNotes" rows="2" placeholder="Status notes, context…"></textarea></div>
     </div>
     <div class="mfoot">
       <button class="btn btn-outline" onclick="closeModal('taskModal')">Cancel</button>
@@ -415,10 +454,10 @@ td input[type=date].ci{color-scheme:dark;}
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let tasks=[],nextId=1;
-let phases=["Phase 1","Phase 2","Phase 3","Future"];
+let phases=["Phase 1","Phase 2","Phase 3","Backlog"];
 let people=["Dad (CEO)","Shaun (COO)","Tia (CE Dir.)","Jada (Social)","Jeremiah (Video)","Mom (PM)"];
 let categories=[];
-let currentTab='__all__',currentView='table';
+let currentTab='Phase 1',currentView='table';
 let sortCol=null,sortDir=1,sortByOrder=true;
 let dragSrcId=null,kbDragId=null;
 let expanded=new Set();
@@ -427,10 +466,13 @@ let noteTaskId=null;
 
 // ── UNDO HISTORY ──────────────────────────────────────────────────────────────
 let undoStack=[], redoStack=[], MAX_UNDO=30;
+let hasUnsavedChanges=false;
 function snapshot(label){
   undoStack.push({label,tasks:JSON.parse(JSON.stringify(tasks)),phases:[...phases],people:[...people],categories:[...categories],currentTab,expanded:new Set(expanded)});
   if(undoStack.length>MAX_UNDO)undoStack.shift();
   redoStack=[];
+  hasUnsavedChanges=true;
+  updateUnsavedIndicator();
   updateUndoBtn();
 }
 function undo(){
@@ -570,24 +612,131 @@ const SEED=[
   ["Phase 3","Financial & Legal","Conduct formal financial audit","Shaun (COO)","2-4 weeks"],
   ["Phase 3","Financial & Legal","Explore small business grants (MD, SBA, MBDA)","Shaun (COO)","Ongoing"],
   ["Phase 3","Financial & Legal","Review IP / trademark for Homefront Watch","Shaun (COO)","4-6 weeks"],
-  ["Future","Technology & Innovation","Develop proprietary mobile app (iOS & Android)","Shaun (COO)","6-12 months"],
-  ["Future","Technology & Innovation","Explore AI-powered threat detection","Shaun (COO)","12+ months"],
-  ["Future","Technology & Innovation","Build B2B SaaS platform for property managers","Shaun (COO)","12+ months"],
-  ["Future","Scale & Exit Strategy","Explore franchise model","Dad (CEO)","2-3 years"],
-  ["Future","Scale & Exit Strategy","Evaluate national retail distribution","Shaun (COO)","18+ months"],
-  ["Future","Scale & Exit Strategy","Develop succession & legacy plan","Dad (CEO)","Ongoing"],
-  ["Future","Community Impact","Launch 'Protect Your Block' initiative","Tia (CE Dir.)","12+ months"],
-  ["Future","Community Impact","Establish Homefront Watch Foundation","Dad (CEO)","2-3 years"],
-  ["Future","Community Impact","Partner with HBCU programs","Tia (CE Dir.)","12+ months"],
+  ["Backlog","Technology & Innovation","Develop proprietary mobile app (iOS & Android)","Shaun (COO)","6-12 months"],
+  ["Backlog","Technology & Innovation","Explore AI-powered threat detection","Shaun (COO)","12+ months"],
+  ["Backlog","Technology & Innovation","Build B2B SaaS platform for property managers","Shaun (COO)","12+ months"],
+  ["Backlog","Scale & Exit Strategy","Explore franchise model","Dad (CEO)","2-3 years"],
+  ["Backlog","Scale & Exit Strategy","Evaluate national retail distribution","Shaun (COO)","18+ months"],
+  ["Backlog","Scale & Exit Strategy","Develop succession & legacy plan","Dad (CEO)","Ongoing"],
+  ["Backlog","Community Impact","Launch 'Protect Your Block' initiative","Tia (CE Dir.)","12+ months"],
+  ["Backlog","Community Impact","Establish Homefront Watch Foundation","Dad (CEO)","2-3 years"],
+  ["Backlog","Community Impact","Partner with HBCU programs","Tia (CE Dir.)","12+ months"],
+  ["Phase 1","Legal & Business Setup","Obtain general liability business insurance","Shaun (COO)","1 week"],
+  ["Phase 1","Legal & Business Setup","Register with MD Home Improvement Commission (MHIC)","Dad (CEO)","3-4 weeks"],
+  ["Phase 1","Legal & Business Setup","Draft customer monitoring agreement / terms of service","Shaun (COO)","1 week"],
+  ["Phase 1","Legal & Business Setup","Draft website privacy policy & terms of use","Shaun (COO)","1 week"],
+  ["Phase 1","Digital Infrastructure","Set up Google Business Profile","Jada (Social)","1 day"],
+  ["Phase 1","Digital Infrastructure","Set up Google Search Console & submit sitemap","Shaun (COO)","1 day"],
+  ["Phase 2","Sales & Revenue","Set up customer review strategy (Google, Trustpilot)","Tia (CE Dir.)","1 week"],
+  ["Phase 2","Sales & Revenue","Build pre-purchase FAQ / objection handler on website","Shaun (COO)","1 week"],
+  ["Phase 2","Sales & Revenue","Set up Amazon listing for base kit","Jada (Social)","2 weeks"],
+  ["Phase 3","Channel Partnerships","Develop wholesale / dealer program for other installers","Shaun (COO)","6-8 weeks"],
 ];
 
 function init(){
   tasks=SEED.map((r,i)=>({
-    id:i+1,parentId:null,phase:r[0],category:r[1],task:r[2],owner:r[3],time:r[4],
+    id:i+1,parentId:null,phase:r[0],category:r[1],task:r[2],owner:[r[3]],time:r[4],blocker:'',dependsOn:null,
     notes:'',status:'Not Started',priority:'',done:false,
     startDate:'',dueDate:'',pct:0,order:i*10
   }));
   nextId=tasks.length+1;
+  // ── POST-SEED SUBTASK SETUP ──────────────────────────────────────────────
+  // Add filming subtasks under "Film founder story video" (Phase 1)
+  const filmParent = tasks.find(t=>t.task==="Film founder story video" && !t.parentId);
+  if(filmParent && !tasks.some(t=>t.parentId===filmParent.id)){
+    const filmSubs = [
+      ["Write founder story video script","Shaun (COO)","2 days"],
+      ["Scout filming location","Jeremiah (Video)","1 day"],
+      ["Record Dad's on-camera interview","Jeremiah (Video)","1 day"],
+      ["Record family team segment","Jeremiah (Video)","1 day"],
+      ["Film product & kit b-roll footage","Jeremiah (Video)","1 day"],
+      ["Edit full founder story video (3-5 min)","Jeremiah (Video)","3 days"],
+      ["Create short-form cut (60 sec) for Reels/TikTok","Jeremiah (Video)","1 day"],
+      ["Add captions, graphics & music","Jeremiah (Video)","2 days"],
+      ["Export finals & upload to shared drive","Jeremiah (Video)","1 day"],
+    ];
+    filmSubs.forEach((s,i)=>{
+      tasks.push({id:nextId++,parentId:filmParent.id,phase:filmParent.phase,
+        category:filmParent.category,task:s[0],owner:[s[1]],time:s[2],
+        notes:'',status:'Not Started',priority:'',done:false,
+        startDate:'',dueDate:'',pct:0,blocker:'',dependsOn:null,
+        order:filmParent.order+0.1+i*0.01});
+    });
+  }
+
+  // Add "Meet the Family" video parent + subtasks
+  const hasMeetFamily = tasks.some(t=>t.task.includes("Meet the Family") && !t.parentId);
+  if(!hasMeetFamily){
+    const meetId = nextId++;
+    const meetOrder = tasks.find(t=>t.task==="Film founder story video")?.order + 1 || tasks.length*10+100;
+    tasks.push({id:meetId,parentId:null,phase:"Phase 1",category:"Content & Marketing Prep",
+      task:"Film 'Meet the Family' team introduction video",owner:["Jeremiah (Video)"],time:"2 days",
+      notes:"Introduce each family member and their role in Homefront Watch",
+      status:'Not Started',priority:'',done:false,startDate:'',dueDate:'',pct:0,
+      blocker:'',dependsOn:null,order:meetOrder});
+    [
+      ["Film individual intro for Dad (CEO)","Jeremiah (Video)","2 hours"],
+      ["Film individual intro for Shaun (COO)","Jeremiah (Video)","2 hours"],
+      ["Film individual intro for Tia","Jeremiah (Video)","2 hours"],
+      ["Film individual intro for Jada","Jeremiah (Video)","2 hours"],
+      ["Film individual intro for Jeremiah","Jeremiah (Video)","1 hour"],
+      ["Film individual intro for Mom (PM)","Jeremiah (Video)","2 hours"],
+      ["Edit & produce final team intro video","Jeremiah (Video)","1 day"],
+    ].forEach((s,i)=>{
+      tasks.push({id:nextId++,parentId:meetId,phase:"Phase 1",
+        category:"Content & Marketing Prep",task:s[0],owner:[s[1]],time:s[2],
+        notes:'',status:'Not Started',priority:'',done:false,startDate:'',dueDate:'',
+        pct:0,blocker:'',dependsOn:null,order:meetOrder+0.1+i*0.01});
+    });
+  }
+
+  // Add product video parent + subtasks
+  const hasProdVideo = tasks.some(t=>t.task.includes("unboxing") && !t.parentId);
+  if(!hasProdVideo){
+    const pvId = nextId++;
+    tasks.push({id:pvId,parentId:null,phase:"Phase 1",category:"Content & Marketing Prep",
+      task:"Film product unboxing & DIY installation walkthrough video",owner:["Jeremiah (Video)"],time:"3 days",
+      notes:"Core trust-builder for D2C — shows how easy installation is",
+      status:'Not Started',priority:'High',done:false,startDate:'',dueDate:'',pct:0,
+      blocker:'',dependsOn:null,order:tasks.length*10+200});
+    [
+      ["Prepare product kit for unboxing shoot","Shaun (COO)","1 hour"],
+      ["Film unboxing & what's in the box","Jeremiah (Video)","2 hours"],
+      ["Film step-by-step DIY installation","Jeremiah (Video)","3 hours"],
+      ["Film 'How monitoring works' explainer segment","Dad (CEO)","2 hours"],
+      ["Edit full installation walkthrough (5-8 min)","Jeremiah (Video)","2 days"],
+      ["Create short unboxing cut for social","Jeremiah (Video)","1 day"],
+    ].forEach((s,i)=>{
+      tasks.push({id:nextId++,parentId:pvId,phase:"Phase 1",
+        category:"Content & Marketing Prep",task:s[0],owner:[s[1]],time:s[2],
+        notes:'',status:'Not Started',priority:'',done:false,startDate:'',dueDate:'',
+        pct:0,blocker:'',dependsOn:null,order:tasks.length*10+200+i*0.01});
+    });
+  }
+
+  // Add professional brand photography parent + subtasks
+  const hasBrandPhoto = tasks.some(t=>t.task==="Design brand photography / product photos" && !t.parentId);
+  if(hasBrandPhoto){
+    const photoParent = tasks.find(t=>t.task==="Design brand photography / product photos");
+    if(!tasks.some(t=>t.parentId===photoParent.id)){
+      [
+        ["Professional headshots — Dad (CEO)","Jeremiah (Video)","1 hour"],
+        ["Professional headshots — Shaun (COO)","Jeremiah (Video)","1 hour"],
+        ["Professional headshots — Tia","Jeremiah (Video)","1 hour"],
+        ["Professional headshots — Jada","Jeremiah (Video)","1 hour"],
+        ["Professional headshots — Jeremiah","Jeremiah (Video)","1 hour"],
+        ["Professional headshots — Mom (PM)","Jeremiah (Video)","1 hour"],
+        ["Product flat lay & lifestyle photography","Jeremiah (Video)","1 day"],
+        ["Edit & retouch all final photos","Jeremiah (Video)","2 days"],
+      ].forEach((s,i)=>{
+        tasks.push({id:nextId++,parentId:photoParent.id,phase:photoParent.phase,
+          category:photoParent.category,task:s[0],owner:[s[1]],time:s[2],
+          notes:'',status:'Not Started',priority:'',done:false,startDate:'',dueDate:'',
+          pct:0,blocker:'',dependsOn:null,order:photoParent.order+0.1+i*0.01});
+      });
+    }
+  }
+
   rebuildCats();buildTabs();buildStats();buildFilters();renderTable();
   // AUTO-LOAD: if a data.json file exists in the same folder, load it automatically
   // To use: export your tasks as JSON, rename it to data.json, put it in the same folder as this HTML
@@ -597,7 +746,7 @@ function init(){
       if(!data||!Array.isArray(data.tasks))return;
       tasks=data.tasks.map((t,i)=>({
         id:t.id||i+1,parentId:t.parentId||null,phase:t.phase||phases[0],
-        category:t.category||'',task:t.task||'',owner:t.owner||'',
+        category:t.category||'',task:t.task||'',owner:Array.isArray(t.owner)?t.owner:(t.owner?[t.owner]:[]),
         time:t.time||'',notes:t.notes||'',status:t.status||'Not Started',
         priority:t.priority||'',done:!!t.done,pct:t.pct||0,
         startDate:t.startDate||'',dueDate:t.dueDate||'',
@@ -702,7 +851,7 @@ function buildFilters(){
   const fo=document.getElementById('filterOwner');const curO=fo.value;
   fo.innerHTML='<option value="">All Owners</option>';
   people.forEach(p=>fo.innerHTML+=`<option${p===curO?' selected':''}>${p}</option>`);
-  if(currentTab!=='__all__'&&fp)fp.value=currentTab;
+  if(fp&&currentTab!=='__all__')fp.value=currentTab;
 }
 function clearFilters(){
   ['searchInput','filterOwner','filterStatus','filterPri'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -721,7 +870,7 @@ function getVisible(){
     if(t.parentId)return false;
     if(currentTab!=='__all__'&&t.phase!==currentTab)return false;
     if(fp&&t.phase!==fp)return false;
-    if(fo&&t.owner!==fo)return false;
+    if(fo&&!(Array.isArray(t.owner)?t.owner.includes(fo):t.owner===fo))return false;
     if(fs&&t.status!==fs)return false;
     if(fpri&&t.priority!==fpri)return false;
     if(q&&![t.task,t.category,t.owner,t.notes,t.phase].join(' ').toLowerCase().includes(q))return false;
@@ -733,7 +882,7 @@ function renderTable(){
   const tbody=document.getElementById('taskTbody');
   let vis=getVisible();
   if(!sortByOrder&&sortCol){
-    vis=[...vis].sort((a,b)=>sortDir*String(a[sortCol]||'').localeCompare(String(b[sortCol]||'')));
+    vis=[...vis].sort((a,b)=>sortDir*String(Array.isArray(a[sortCol])?a[sortCol].join(','):a[sortCol]||'').localeCompare(String(Array.isArray(b[sortCol])?b[sortCol].join(','):b[sortCol]||'')));
   } else vis=[...vis].sort((a,b)=>a.order-b.order);
 
   if(!vis.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty"><div class="ei">📋</div>No tasks found.</div></td></tr>`;return;}
@@ -761,7 +910,7 @@ function renderTable(){
     html+=`<tr data-id="${t.id}" class="${doneClass}" draggable="true"
       ondragstart="onDS(event,${t.id})" ondragover="onDO(event)" ondrop="onDrop(event,${t.id})" ondragend="onDE()">
       <td><span class="dh">⠿</span></td>
-      <td class="row-num">${idx+1}</td>
+      <td class="row-num" style="color:rgba(255,255,255,.35);font-size:10px;overflow:visible;white-space:nowrap">#${t.id}</td>
       <td style="text-align:center">${expBtn}</td>
       <td style="text-align:center"><input type="checkbox" class="done-cb" ${t.done?'checked':''} onchange="toggleDone(${t.id},this.checked)"></td>
       <td ondblclick="editPct(${t.id},this)" style="cursor:pointer">
@@ -770,14 +919,14 @@ function renderTable(){
       <td class="editable" ondblclick="ie(this,'phase','select',${t.id})"><span class="phase-pill ${pillCls}">${esc(t.phase)}</span></td>
       <td class="editable" ondblclick="ie(this,'priority','select',${t.id})"><span class="pri-dot ${priM.cls}">${priM.lbl}</span></td>
       <td class="editable" ondblclick="ie(this,'category','text',${t.id})">${esc(t.category)}</td>
-      <td class="editable" ondblclick="ie(this,'task','text',${t.id})" style="font-weight:500">${esc(t.task)}</td>
-      <td class="editable" ondblclick="ie(this,'owner','select',${t.id})"><span class="owner-tag">${esc(t.owner)}</span></td>
+      <td class="editable" ondblclick="ie(this,'task','text',${t.id})" style="font-weight:500">${t.blocker?'<span class="blocker-flag" title="'+esc(t.blocker)+'">🚫 </span>':''}<span class="dep-warn" style="display:${depWarn(t)?'inline':'none'}" title="Depends on incomplete task">⚠ </span>${esc(t.task)}</td>
+      <td class="editable" ondblclick="ie(this,'owner','owner',${t.id})">${renderOwnerTags(t.owner)}</td>
       <td class="editable" ondblclick="ie(this,'status','select',${t.id})"><span class="status-pill ${stCls}">${t.status}</span></td>
       <td class="editable date-val" ondblclick="ie(this,'startDate','date',${t.id})">${fmtDate(t.startDate)}</td>
       <td class="editable date-val${dueCls}" ondblclick="ie(this,'dueDate','date',${t.id})">${fmtDate(t.dueDate)}</td>
       <td class="editable" ondblclick="ie(this,'time','text',${t.id})" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid)">${esc(t.time)}</td>
       <td style="text-align:center"><button class="note-btn ${hasNote?'has-note':''}" onclick="openNotePop(${t.id},this)" title="${hasNote?'Edit note':'Add note'}">📝</button></td>
-      <td><button class="del-btn" onclick="deleteTask(${t.id})">✕</button></td>
+      <td><button class="edit-row-btn" onclick="openAddModal(${t.id})" title="Edit all fields">✏</button></td><td><button class="del-btn" onclick="deleteTask(${t.id})">✕</button></td>
     </tr>`;
 
     // subtask rows
@@ -792,7 +941,7 @@ function renderTable(){
         const sHasNote=s.notes&&s.notes.trim().length>0;
         html+=`<tr data-id="${s.id}" class="sub-row ${sDone} ${hidden}" data-parent="${t.id}">
           <td></td>
-          <td class="row-num" style="color:rgba(255,255,255,.1)">${idx+1}.${si+1}</td>
+          <td class="row-num" style="color:rgba(255,255,255,.2);font-size:10px;overflow:visible;white-space:nowrap">#${s.id}</td>
           <td style="text-align:center;font-size:11px;color:rgba(255,255,255,.18)">↳</td>
           <td style="text-align:center"><input type="checkbox" class="done-cb" ${s.done?'checked':''} onchange="toggleDone(${s.id},this.checked)"></td>
           <td ondblclick="editPct(${s.id},this)" style="cursor:pointer">
@@ -801,20 +950,21 @@ function renderTable(){
           <td></td>
           <td class="editable" ondblclick="ie(this,'priority','select',${s.id})"><span class="pri-dot ${sPriM.cls}">${sPriM.lbl}</span></td>
           <td class="editable" ondblclick="ie(this,'category','text',${s.id})" style="font-size:11.5px;color:var(--mid)">${esc(s.category)}</td>
-          <td class="editable" ondblclick="ie(this,'task','text',${s.id})" style="font-weight:500;padding-left:18px">${esc(s.task)}</td>
-          <td class="editable" ondblclick="ie(this,'owner','select',${s.id})"><span class="owner-tag">${esc(s.owner)}</span></td>
+          <td class="editable" ondblclick="ie(this,'task','text',${s.id})" style="font-weight:500;padding-left:18px">${s.blocker?'<span class="blocker-flag" title="'+esc(s.blocker)+'">🚫 </span>':''}<span style="display:${depWarn(s)?'inline':'none'}" title="Depends on incomplete task">⚠ </span>${esc(s.task)}</td>
+          <td class="editable" ondblclick="ie(this,'owner','owner',${s.id})">${renderOwnerTags(s.owner)}</td>
           <td class="editable" ondblclick="ie(this,'status','select',${s.id})"><span class="status-pill ${sStCls}">${s.status}</span></td>
           <td class="editable date-val" ondblclick="ie(this,'startDate','date',${s.id})">${fmtDate(s.startDate)}</td>
           <td class="editable date-val${sDueCls}" ondblclick="ie(this,'dueDate','date',${s.id})">${fmtDate(s.dueDate)}</td>
           <td class="editable" ondblclick="ie(this,'time','text',${s.id})" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid)">${esc(s.time)}</td>
           <td style="text-align:center"><button class="note-btn ${sHasNote?'has-note':''}" onclick="openNotePop(${s.id},this)" title="${sHasNote?'Edit note':'Add note'}">📝</button></td>
-          <td><button class="del-btn" onclick="deleteTask(${s.id})">✕</button></td>
+          <td><button class="edit-row-btn" onclick="openAddModal(${s.id})" title="Edit all fields">✏</button></td><td><button class="del-btn" onclick="deleteTask(${s.id})">✕</button></td>
         </tr>`;
       });
     }
   });
   tbody.innerHTML=html;
   updateStats();
+  updateBlockerPanel();
 }
 
 // ── % COMPLETE EDIT ───────────────────────────────────────────────────────────
@@ -893,11 +1043,12 @@ function toggleDone(id,val){
 // ── INLINE EDIT ───────────────────────────────────────────────────────────────
 function ie(td,field,type,id){
   const t=tasks.find(x=>x.id===id);if(!t)return;
+  if(field==='owner'){openInlineOwnerPicker(td,t);return;}
   const cur=t[field]||'';
   let el;
   if(type==='select'){
     el=document.createElement('select');el.className='cs2';
-    const opts=field==='phase'?phases:field==='owner'?people:field==='status'?SO:['','High','Medium','Low'];
+    const opts=field==='phase'?phases:field==='status'?SO:['','High','Medium','Low'];
     opts.forEach(o=>{const opt=document.createElement('option');opt.value=o;opt.textContent=o||'— None —';if(o===cur)opt.selected=true;el.appendChild(opt);});
   } else if(type==='date'){
     el=document.createElement('input');el.type='date';el.className='ci';el.value=cur;
@@ -966,24 +1117,29 @@ function openAddModal(id=null,parentId=null){
   document.getElementById('editId').value=id||'';
   document.getElementById('editParentId').value=parentId||'';
   const fp=document.getElementById('fPhase');fp.innerHTML=phases.map(p=>`<option>${p}</option>`).join('');
-  const fo=document.getElementById('fOwner');fo.innerHTML=people.map(p=>`<option>${p}</option>`).join('');
+  ownerDropdownOpen=false;const fod=document.getElementById('fOwnerDropdown');if(fod)fod.style.display='none';
   const dl=document.getElementById('catDL');dl.innerHTML=categories.map(c=>`<option value="${esc(c)}">`).join('');
   if(id){
     const t=tasks.find(x=>x.id===id);
     fp.value=t.phase;document.getElementById('fCat').value=t.category;
-    document.getElementById('fTask').value=t.task;fo.value=t.owner;
-    document.getElementById('fTime').value=t.time;
+    document.getElementById('fTask').value=t.task;
+    parseTimeValue(t.time);
     document.getElementById('fNotes').value=t.notes||'';
     document.getElementById('fStatus').value=t.status;
     document.getElementById('fPriority').value=t.priority||'';
     document.getElementById('fStart').value=t.startDate||'';
     document.getElementById('fDue').value=t.dueDate||'';
+    document.getElementById('fBlocker').value=t.blocker||'';
+    document.getElementById('fDependsOn').value=t.dependsOn||'';
+    buildOwnerDropdown(Array.isArray(t.owner)?t.owner:(t.owner?[t.owner]:[]));
   } else {
     const par=parentId?tasks.find(x=>x.id===parentId):null;
     fp.value=par?par.phase:(currentTab!=='__all__'?currentTab:phases[0]);
     document.getElementById('fCat').value=par?par.category:'';
-    ['fTask','fTime','fNotes','fStart','fDue'].forEach(i=>document.getElementById(i).value='');
-    fo.value=people[1]||'';
+    ['fTask','fNotes','fStart','fDue','fBlocker','fDependsOn'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('fTimeNum').value='';
+    document.getElementById('fTimeUnit').value='days';
+    buildOwnerDropdown([people[1]||'']);
     document.getElementById('fStatus').value='Not Started';
     document.getElementById('fPriority').value='';
   }
@@ -1000,15 +1156,17 @@ function saveTask(){
     id:id||nextId++,parentId:parentId||null,
     phase:document.getElementById('fPhase').value,
     category:document.getElementById('fCat').value.trim(),task:name,
-    owner:document.getElementById('fOwner').value,
-    time:document.getElementById('fTime').value.trim(),
+    owner:getSelectedOwners(),
+    time:getTimeValue(),
     notes:document.getElementById('fNotes').value.trim(),
     status,priority:document.getElementById('fPriority').value,
     done:status==='Complete',
     startDate:document.getElementById('fStart').value,
     dueDate:document.getElementById('fDue').value,
     pct:status==='Complete'?100:(id?tasks.find(x=>x.id===id)?.pct||0:0),
-    order:id?tasks.find(x=>x.id===id).order:tasks.length*10+nextId
+    order:id?tasks.find(x=>x.id===id).order:tasks.length*10+nextId,
+    blocker:document.getElementById('fBlocker').value.trim(),
+    dependsOn:parseInt(document.getElementById('fDependsOn').value)||null
   };
   if(id)tasks[tasks.findIndex(x=>x.id===id)]=obj;
   else{tasks.push(obj);if(parentId)expanded.add(parentId);}
@@ -1048,7 +1206,7 @@ function getKbTasks(){
   return tasks.filter(t=>{
     if(t.parentId)return false;
     if(kfp&&t.phase!==kfp)return false;
-    if(kfo&&t.owner!==kfo)return false;
+    if(kfo&&!(Array.isArray(t.owner)?t.owner.includes(kfo):t.owner===kfo))return false;
     if(kfpri&&t.priority!==kfpri)return false;
     return true;
   });
@@ -1068,10 +1226,10 @@ function renderKanban(){
       const dueCls=isOverdue(t.dueDate)&&!t.done?' overdue':'';
       return `<div class="kb-card ${t.done?'done-card':''}" data-id="${t.id}" draggable="true"
         ondragstart="kbDS(event,${t.id})" ondragover="kbDO(event)" ondrop="kbDrop(event,'${status}')" ondragend="kbDE()">
-        <div class="kc-task">${esc(t.task)}</div>
+        <div class="kc-task"><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mid);margin-right:5px">#${t.id}</span>${esc(t.task)}</div>
         <div class="kc-meta">
           <span class="phase-pill ${pillCls}" style="font-size:10px">${esc(t.phase)}</span>
-          <span class="owner-tag" style="font-size:10px">${esc(t.owner)}</span>
+          ${renderOwnerTags(t.owner,true)}
           ${t.priority?`<span class="pri-dot ${priM.cls}" style="font-size:10px">${priM.lbl}</span>`:''}
           ${pct>0?`<span class="kc-pct">${pct}%</span>`:''}
           ${t.dueDate?`<span class="date-val${dueCls}" style="font-size:10px">📅 ${fmtDate(t.dueDate)}</span>`:''}
@@ -1161,12 +1319,14 @@ function showExportModal(){document.getElementById('exportModal').classList.add(
 function exportJSON(){
   const data={version:4,exported:new Date().toISOString(),phases,people,categories,tasks};
   dl('data.json',JSON.stringify(data,null,2),'application/json');
-  closeModal('exportModal');toast('✓ JSON exported');
+  hasUnsavedChanges=false;
+  updateUnsavedIndicator();
+  closeModal('exportModal');toast('✓ Exported & saved as data.json');
 }
 function exportCSV(){
-  const cols=['order','parentId','phase','category','task','owner','status','priority','done','pct','startDate','dueDate','time','notes'];
+  const cols=['order','parentId','phase','category','task','owner','status','priority','done','pct','startDate','dueDate','time','notes','blocker','dependsOn'];
   const hdr=cols.join(',');
-  const rows=[...tasks].sort((a,b)=>a.order-b.order).map(t=>cols.map(c=>`"${String(t[c]!=null?t[c]:'').replace(/"/g,'""')}"`).join(','));
+  const rows=[...tasks].sort((a,b)=>a.order-b.order).map(t=>cols.map(c=>`"${String(Array.isArray(t[c])?t[c].join(';'):t[c]!=null?t[c]:'').replace(/"/g,'""')}"`).join(','));
   dl('homefront_watch_tasks.csv',[hdr,...rows].join('\n'),'text/csv');
   closeModal('exportModal');toast('✓ CSV exported');
 }
@@ -1184,11 +1344,11 @@ function handleImport(e){
         if(!confirm(`Import ${imp.length} tasks? This replaces current data.`))return;
         tasks=imp.map((t,i)=>({
           id:t.id||i+1,parentId:t.parentId||null,phase:t.phase||phases[0],
-          category:t.category||'',task:t.task||'',owner:t.owner||'',
+          category:t.category||'',task:t.task||'',owner:Array.isArray(t.owner)?t.owner:(t.owner?[t.owner]:[]),
           time:t.time||'',notes:t.notes||'',status:t.status||'Not Started',
           priority:t.priority||'',done:!!t.done,pct:t.pct||0,
           startDate:t.startDate||'',dueDate:t.dueDate||'',
-          order:t.order!=null?t.order:i*10
+          order:t.order!=null?t.order:i*10,blocker:t.blocker||'',dependsOn:t.dependsOn||null
         }));
         nextId=Math.max(...tasks.map(t=>t.id))+1;
         if(data.phases)phases=data.phases;if(data.people)people=data.people;
@@ -1199,7 +1359,7 @@ function handleImport(e){
         const imp=lines.slice(1).map((line,i)=>{
           const vals=parseCSV(line);const obj={};
           hdrs.forEach((h,j)=>{obj[h]=(vals[j]||'').replace(/^"|"$/g,'').trim();});
-          return{id:i+1,parentId:obj.parentid?parseInt(obj.parentid):null,phase:obj.phase||phases[0],category:obj.category||'',task:obj.task||'',owner:obj.owner||'',time:obj.time||'',notes:obj.notes||'',status:obj.status||'Not Started',priority:obj.priority||'',done:obj.done==='true',pct:parseInt(obj.pct)||0,startDate:obj.startdate||'',dueDate:obj.duedate||'',order:parseInt(obj.order)||i*10};
+          return{id:i+1,parentId:obj.parentid?parseInt(obj.parentid):null,phase:obj.phase||phases[0],category:obj.category||'',task:obj.task||'',owner:obj.owner?obj.owner.split(';').map(s=>s.trim()).filter(Boolean):[],time:obj.time||'',notes:obj.notes||'',status:obj.status||'Not Started',priority:obj.priority||'',done:obj.done==='true',pct:parseInt(obj.pct)||0,startDate:obj.startdate||'',dueDate:obj.duedate||'',order:parseInt(obj.order)||i*10,blocker:obj.blocker||'',dependsOn:obj.dependson?parseInt(obj.dependson):null};
         }).filter(t=>t.task);
         if(!confirm(`Import ${imp.length} tasks? This replaces current data.`))return;
         tasks=imp;nextId=tasks.length+1;rebuildCats();
@@ -1218,7 +1378,398 @@ function parseCSV(line){const r=[];let c='',q=false;for(let i=0;i<line.length;i+
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2400);}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
+// ── MULTI-ASSIGNEE HELPERS ────────────────────────────────────────────────────
+function renderOwnerTags(owner, small=false){
+  const arr=Array.isArray(owner)?owner:(owner?[owner]:[]);
+  if(!arr.length)return'<span class="owner-tag" style="opacity:.3">—</span>';
+  const sz=small?'font-size:10px;':'';
+  return arr.map(o=>`<span class="owner-tag" style="${sz}margin-right:2px">${esc(o)}</span>`).join('');
+}
+
+function getSelectedOwners(){
+  return [...document.querySelectorAll('#fOwnerWrap .owner-cb:checked')].map(cb=>cb.value);
+}
+
+let ownerDropdownOpen=false;
+function toggleOwnerDropdown(){
+  const wrap=document.getElementById('fOwnerWrap');
+  const dd=document.getElementById('fOwnerDropdown');
+  if(!dd)return;
+  ownerDropdownOpen=!ownerDropdownOpen;
+  if(ownerDropdownOpen){
+    // position dropdown below wrap
+    const rect=wrap.getBoundingClientRect();
+    dd.style.top=(rect.bottom+4)+'px';
+    dd.style.left=rect.left+'px';
+    dd.style.display='block';
+  } else {
+    dd.style.display='none';
+  }
+}
+
+function buildOwnerDropdown(selectedArr){
+  const wrap=document.getElementById('fOwnerWrap');
+  const dd=document.getElementById('fOwnerDropdown');
+  if(!wrap||!dd)return;
+  // build checkboxes in dropdown
+  dd.innerHTML=people.map(p=>{
+    const chk=selectedArr.includes(p)?'checked':'';
+    return `<label style="display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:5px;cursor:pointer;font-size:12.5px;white-space:nowrap;transition:background .12s" onmouseover="this.style.background='rgba(201,168,76,.1)'" onmouseout="this.style.background=''">
+      <input type="checkbox" class="owner-cb" value="${esc(p)}" ${chk} onchange="refreshOwnerWrap()"> ${esc(p)}
+    </label>`;
+  }).join('');
+  refreshOwnerWrap();
+}
+
+function refreshOwnerWrap(){
+  const wrap=document.getElementById('fOwnerWrap');
+  if(!wrap)return;
+  const selected=getSelectedOwners();
+  wrap.innerHTML=selected.length
+    ? selected.map(o=>`<span class="owner-tag" style="font-size:12px">${esc(o)}</span>`).join('')
+    : '<span style="color:var(--mid);font-size:12.5px">Click to select assignee(s)…</span>';
+  // re-append checkbox inputs (hidden) so getSelectedOwners still works
+  const dd=document.getElementById('fOwnerDropdown');
+  if(dd){
+    dd.querySelectorAll('.owner-cb').forEach(cb=>{
+      const hidden=document.createElement('input');
+      hidden.type='hidden';hidden.className='owner-cb';hidden.value=cb.value;
+      if(cb.checked){hidden.setAttribute('checked','');wrap.appendChild(hidden);}
+    });
+  }
+}
+
+function openInlineOwnerPicker(td, t){
+  const cur=Array.isArray(t.owner)?t.owner:(t.owner?[t.owner]:[]);
+  const sel=document.createElement('select');
+  sel.className='cs2';sel.multiple=true;sel.size=Math.min(people.length,6);
+  sel.style.height='auto';
+  people.forEach(p=>{
+    const o=document.createElement('option');o.value=p;o.textContent=p;
+    if(cur.includes(p))o.selected=true;
+    sel.appendChild(o);
+  });
+  td.innerHTML='<div style="font-size:10px;color:var(--mid);margin-bottom:2px">Ctrl/Cmd+click multi-select</div>';
+  td.appendChild(sel);
+  sel.focus();
+  const save=()=>{
+    snapshot('Edit assignees');
+    t.owner=[...sel.selectedOptions].map(o=>o.value);
+    buildTabs();updateStats();buildFilters();renderTable();
+    if(currentView==='kanban')renderKanban();
+    toast('✓ Assignees updated');
+  };
+  sel.addEventListener('blur',()=>setTimeout(save,150));
+  sel.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();save();}if(e.key==='Escape')renderTable();});
+}
+
+// Close owner dropdown when clicking outside
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('fOwnerDropdown');
+  const wrap=document.getElementById('fOwnerWrap');
+  if(dd&&wrap&&ownerDropdownOpen&&!dd.contains(e.target)&&!wrap.contains(e.target)){
+    dd.style.display='none';ownerDropdownOpen=false;
+  }
+});
+
+
+// ── UNSAVED CHANGES GUARD ────────────────────────────────────────────────────
+function updateUnsavedIndicator(){
+  const ind=document.getElementById('unsavedDot');
+  const btn=document.getElementById('exportBtnMain');
+  const banner=document.getElementById('unsavedBanner');
+  if(ind) ind.style.display=hasUnsavedChanges?'inline-block':'none';
+  if(banner) banner.style.display=hasUnsavedChanges?'flex':'none';
+  if(btn){
+    btn.classList.toggle('btn-unsaved', hasUnsavedChanges);
+    btn.classList.toggle('btn-gold', !hasUnsavedChanges);
+  }
+}
+
+window.addEventListener('beforeunload', e=>{
+  if(!hasUnsavedChanges)return;
+  e.preventDefault();
+  // Modern browsers show their own message but we need to set returnValue
+  e.returnValue='You have unsaved changes. Export your data as data.json before leaving so your team sees your updates.';
+  return e.returnValue;
+});
+
+
+// ── BLOCKER & DEPENDENCY HELPERS ─────────────────────────────────────────────
+function depWarn(t){
+  if(!t.dependsOn)return false;
+  const dep=tasks.find(x=>x.id===t.dependsOn);
+  return dep && dep.status!=='Complete';
+}
+function depLabel(t){
+  if(!t.dependsOn)return'';
+  const dep=tasks.find(x=>x.id===t.dependsOn);
+  return dep?`Depends on: #${t.dependsOn} "${dep.task}"`:'';
+}
+
+// ── PRINT / PDF VIEW ─────────────────────────────────────────────────────────
+function openPrintView(){
+  const pp=document.getElementById('printPhase');
+  const po=document.getElementById('printOwner');
+  if(pp){pp.innerHTML='<option value="">All Phases</option>';phases.forEach(p=>pp.innerHTML+=`<option>${p}</option>`);}
+  if(po){po.innerHTML='<option value="">All Assignees</option>';people.forEach(p=>po.innerHTML+=`<option>${p}</option>`);}
+  document.getElementById('printModal').classList.add('open');
+}
+
+function doPrint(){
+  const phase=document.getElementById('printPhase').value;
+  const owner=document.getElementById('printOwner').value;
+  const status=document.getElementById('printStatus').value;
+  const pri=document.getElementById('printPri').value;
+  const hideDone=document.getElementById('printHideDone').checked;
+
+  let filtered=tasks.filter(t=>{
+    if(t.parentId)return false;
+    if(hideDone&&t.done)return false;
+    if(phase&&t.phase!==phase)return false;
+    if(owner&&!(Array.isArray(t.owner)?t.owner.includes(owner):t.owner===owner))return false;
+    if(status&&t.status!==status)return false;
+    if(pri&&t.priority!==pri)return false;
+    return true;
+  }).sort((a,b)=>a.order-b.order);
+
+  const ST_COL={'Not Started':'#4A8CF7','In Progress':'#E8A430','On Hold':'#9B6FD4','Complete':'#3CB872'};
+  const PR_COL={'High':'#E05252','Medium':'#E8A430','Low':'#5B9BD5','':`#888`};
+
+  const today=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const filterDesc=[phase,owner,status,pri].filter(Boolean).join(' · ')||'All Tasks';
+
+  // Group by phase then category
+  const grouped={};
+  filtered.forEach(t=>{
+    const k=t.phase;
+    if(!grouped[k])grouped[k]={};
+    if(!grouped[k][t.category])grouped[k][t.category]=[];
+    grouped[k][t.category].push(t);
+  });
+
+  let rows='';
+  Object.entries(grouped).forEach(([phase,cats])=>{
+    rows+=`<tr class="phase-hdr"><td colspan="7">${phase}</td></tr>`;
+    Object.entries(cats).forEach(([cat,ts])=>{
+      rows+=`<tr class="cat-hdr"><td colspan="7">${cat}</td></tr>`;
+      ts.forEach((t,i)=>{
+        const pct=calcPct(t);
+        const subs=tasks.filter(s=>s.parentId===t.id);
+        const owners=Array.isArray(t.owner)?t.owner.join(', '):t.owner;
+        const stCol=ST_COL[t.status]||'#888';
+        const prCol=PR_COL[t.priority||'']||'#888';
+        const blockerNote=t.blocker?`<div style="color:#E05252;font-size:10px;margin-top:2px">🚫 ${t.blocker}</div>`:'';
+        const depNote=t.dependsOn&&depWarn(t)?`<div style="color:#E8A430;font-size:10px;margin-top:2px">⚠ Blocked by #${t.dependsOn}</div>`:'';
+        rows+=`<tr class="${t.done?'done-row':''}${i%2===0?'':' alt'}">
+          <td style="width:32px;text-align:center;color:#888;font-size:10px">${i+1}</td>
+          <td><div style="font-weight:600;font-size:12px">${t.task}</div>${blockerNote}${depNote}
+            ${subs.length?`<div style="font-size:10px;color:#888;margin-top:2px">${subs.filter(s=>s.done).length}/${subs.length} subtasks done</div>`:''}
+          </td>
+          <td style="color:${prCol};font-size:11px;white-space:nowrap">${t.priority||'—'}</td>
+          <td style="font-size:11px;white-space:nowrap">${owners}</td>
+          <td><span style="background:${stCol}22;color:${stCol};border:1px solid ${stCol}44;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:600;white-space:nowrap">${t.status}</span></td>
+          <td style="font-size:11px;color:#888;white-space:nowrap">${t.dueDate?fmtDate(t.dueDate):'—'}</td>
+          <td style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 28 28" style="transform:rotate(-90deg)">
+              <circle cx="14" cy="14" r="10" fill="none" stroke="#eee" stroke-width="3"/>
+              <circle cx="14" cy="14" r="10" fill="none" stroke="${pct>=100?'#3CB872':pct>0?'#4A8CF7':'#ddd'}" stroke-width="3" stroke-linecap="round"
+                stroke-dasharray="${2*Math.PI*10}" stroke-dashoffset="${2*Math.PI*10*(1-pct/100)}"/>
+            </svg>
+          </td>
+        </tr>`;
+      });
+    });
+  });
+
+  const win=window.open('','_blank','width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><title>Homefront Watch — Project Report</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1a2e;padding:32px;font-size:13px;}
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+    .report-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #C9A84C;}
+    .report-title{font-size:22px;font-weight:700;color:#0F1E36;letter-spacing:1px;}
+    .report-sub{font-size:11px;color:#888;margin-top:4px;}
+    .report-meta{text-align:right;font-size:11px;color:#888;}
+    .summary-bar{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+    .summary-pill{background:#f5f5f5;border-radius:7px;padding:8px 14px;font-size:11px;color:#555;}
+    .summary-pill strong{display:block;font-size:18px;color:#0F1E36;font-weight:700;}
+    table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+    thead th{background:#0F1E36;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;}
+    tr.phase-hdr td{background:#1B3A6B;color:#C9A84C;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:2px;padding:8px 10px;}
+    tr.cat-hdr td{background:#f0f0f0;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;padding:6px 10px;font-weight:600;}
+    tbody tr td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
+    tbody tr.alt td{background:#fafafa;}
+    tbody tr.done-row td{color:#bbb;text-decoration:line-through;}
+    tbody tr:hover td{background:#fff8e6;}
+    .footer{margin-top:24px;padding-top:12px;border-top:1px solid #eee;font-size:10px;color:#bbb;display:flex;justify-content:space-between;}
+    @media print{body{padding:16px;}tr{page-break-inside:avoid;}}
+  </style></head><body>
+  <div class="report-header">
+    <div>
+      <div class="report-title">🏠 Homefront Watch — Project Report</div>
+      <div class="report-sub">Intelligent Surveillance Corp · Filter: ${filterDesc}</div>
+    </div>
+    <div class="report-meta">${today}<br><strong style="color:#0F1E36">${filtered.length} tasks</strong></div>
+  </div>
+  <div class="summary-bar">
+    <div class="summary-pill"><strong>${filtered.filter(t=>t.done).length}</strong>Complete</div>
+    <div class="summary-pill"><strong>${filtered.filter(t=>t.status==='In Progress').length}</strong>In Progress</div>
+    <div class="summary-pill"><strong>${filtered.filter(t=>t.status==='On Hold').length}</strong>On Hold</div>
+    <div class="summary-pill"><strong>${filtered.filter(t=>t.priority==='High'&&!t.done).length}</strong>High Priority Open</div>
+    <div class="summary-pill"><strong>${filtered.filter(t=>isOverdue(t.dueDate)&&!t.done).length}</strong>Overdue</div>
+    <div class="summary-pill"><strong>${filtered.length>0?Math.round(filtered.filter(t=>t.done).length/filtered.length*100):0}%</strong>Overall Complete</div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Task</th><th>Priority</th><th>Assignee(s)</th><th>Status</th><th>Due Date</th><th>%</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="footer">
+    <span>Homefront Watch · Intelligent Surveillance Corp</span>
+    <span>Generated ${today} · Use File → Print → Save as PDF</span>
+  </div>
+  <script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script>
+  </body></html>`);
+  win.document.close();
+  closeModal('printModal');
+}
+
+// ── BLOCKERS & DEPENDENCIES PANEL ────────────────────────────────────────────
+let blockerPanelCollapsed = false;
+
+function updateBlockerPanel(){
+  const panel = document.getElementById('blockerPanel');
+  const content = document.getElementById('blockerPanelContent');
+  const title = document.getElementById('blockerPanelTitle');
+  if(!panel||!content)return;
+
+  const blocked = tasks.filter(t=>!t.parentId && t.blocker && t.blocker.trim());
+  const dependent = tasks.filter(t=>!t.parentId && t.dependsOn && depWarn(t));
+  const total = blocked.length + dependent.length;
+
+  if(total === 0){ panel.style.display='none'; return; }
+  panel.style.display='block';
+  if(title) title.textContent = `Blockers & Dependencies (${total} item${total!==1?'s':''})`;
+
+  let html = '';
+
+  if(blocked.length){
+    html += `<div style="font-size:10.5px;font-weight:600;color:#F08080;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:7px;">🚫 Blocked Tasks (${blocked.length})</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">`;
+    blocked.forEach(t=>{
+      const owners = Array.isArray(t.owner)?t.owner.join(', '):t.owner;
+      const pi = phases.indexOf(t.phase);
+      const pillCls = pi>=0?(PP[pi]||'pill-c'):'pill-c';
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(224,82,82,.08);border:1px solid rgba(224,82,82,.18);border-radius:7px;flex-wrap:wrap;">
+        <span class="phase-pill ${pillCls}" style="font-size:10px;flex-shrink:0">${esc(t.phase)}</span>
+        <span style="font-size:12.5px;font-weight:500;flex:1;min-width:120px">${esc(t.task)}</span>
+        <span class="owner-tag" style="font-size:11px;flex-shrink:0">${esc(owners)}</span>
+        <span style="font-size:11.5px;color:#F08080;flex-shrink:0">🚫 ${esc(t.blocker)}</span>
+        <button class="btn btn-ghost btn-sm" style="padding:3px 8px;font-size:11px;flex-shrink:0" onclick="openAddModal(${t.id})">Edit</button>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if(dependent.length){
+    html += `<div style="font-size:10.5px;font-weight:600;color:#E8A430;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:7px;">🔗 Waiting on Dependency (${dependent.length})</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:5px;">`;
+    dependent.forEach(t=>{
+      const dep = tasks.find(x=>x.id===t.dependsOn);
+      const owners = Array.isArray(t.owner)?t.owner.join(', '):t.owner;
+      const pi = phases.indexOf(t.phase);
+      const pillCls = pi>=0?(PP[pi]||'pill-c'):'pill-c';
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(232,164,48,.07);border:1px solid rgba(232,164,48,.2);border-radius:7px;flex-wrap:wrap;">
+        <span class="phase-pill ${pillCls}" style="font-size:10px;flex-shrink:0">${esc(t.phase)}</span>
+        <span style="font-size:12.5px;font-weight:500;flex:1;min-width:120px">${esc(t.task)}</span>
+        <span class="owner-tag" style="font-size:11px;flex-shrink:0">${esc(owners)}</span>
+        <span style="font-size:11.5px;color:#E8A430;flex-shrink:0">⚠ Waiting on: <em>${dep?esc(dep.task):'#'+t.dependsOn}</em></span>
+        <button class="btn btn-ghost btn-sm" style="padding:3px 8px;font-size:11px;flex-shrink:0" onclick="openAddModal(${t.id})">Edit</button>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+function toggleBlockerPanel(){
+  blockerPanelCollapsed = !blockerPanelCollapsed;
+  const body = document.getElementById('blockerPanelBody');
+  const toggle = document.getElementById('blockerPanelToggle');
+  if(body) body.style.display = blockerPanelCollapsed ? 'none' : 'block';
+  if(toggle) toggle.textContent = blockerPanelCollapsed ? '▶ expand' : '▼ collapse';
+}
+
+// ── EST. TIME HELPERS ─────────────────────────────────────────────────────────
+function getTimeValue(){
+  const num = document.getElementById('fTimeNum').value.trim();
+  const unit = document.getElementById('fTimeUnit').value;
+  if(unit === 'ongoing') return 'Ongoing';
+  if(!num) return '';
+  const n = parseFloat(num);
+  const labels = {hours:'hour',days:'day',weeks:'week',months:'month'};
+  const label = labels[unit]||unit;
+  return n === 1 ? `1 ${label}` : `${n} ${label}s`;
+}
+
+function parseTimeValue(str){
+  const numEl = document.getElementById('fTimeNum');
+  const unitEl = document.getElementById('fTimeUnit');
+  if(!str||!numEl||!unitEl){return;}
+  const s = str.toLowerCase().trim();
+  if(s === 'ongoing'){unitEl.value='ongoing';numEl.value='';return;}
+  const m = s.match(/^([\d.]+)\s*(hour|day|week|month)/);
+  if(m){
+    numEl.value = m[1];
+    const u = m[2];
+    unitEl.value = u+'s'; // hours, days, weeks, months
+  } else {
+    // fallback: put raw string into num field as text won't fit, just clear
+    numEl.value = '';
+    unitEl.value = 'days';
+  }
+}
+
 init();
 </script>
+
+<!-- PRINT / PDF VIEW MODAL -->
+<div class="overlay" id="printModal">
+  <div class="modal" style="width:460px">
+    <div class="mhdr"><h2>Print / PDF Export</h2><button class="close-m" onclick="closeModal('printModal')">×</button></div>
+    <div class="mbody">
+      <p style="font-size:12.5px;color:var(--mid);line-height:1.6">Generates a clean printable summary. Use your browser's <strong style="color:var(--offwhite)">Print → Save as PDF</strong> to export as a PDF file.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Filter by Phase</label>
+          <select id="printPhase"><option value="">All Phases</option></select>
+        </div>
+        <div class="field"><label>Filter by Assignee</label>
+          <select id="printOwner"><option value="">All Assignees</option></select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Filter by Status</label>
+          <select id="printStatus">
+            <option value="">All Status</option>
+            <option>Not Started</option><option>In Progress</option>
+            <option>On Hold</option><option>Complete</option>
+          </select>
+        </div>
+        <div class="field"><label>Filter by Priority</label>
+          <select id="printPri"><option value="">All Priority</option><option>High</option><option>Medium</option><option>Low</option></select>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;padding:8px 0">
+        <input type="checkbox" id="printHideDone" style="accent-color:var(--gold)"> Hide completed tasks
+      </label>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-outline" onclick="closeModal('printModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="doPrint()">🖨 Open Print View</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

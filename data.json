@@ -1,11 +1,11 @@
 {
   "version": 4,
-  "exported": "2026-04-03T02:45:13.164Z",
+  "exported": "2026-04-03T06:16:19.435Z",
   "phases": [
     "Phase 1",
     "Phase 2",
     "Phase 3",
-    "Future"
+    "Backlog"
   ],
   "people": [
     "Dad (CEO)",
@@ -45,8 +45,12 @@
       "phase": "Phase 1",
       "category": "Brand Foundation",
       "task": "Define brand mission, vision & values",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -62,8 +66,12 @@
       "phase": "Phase 1",
       "category": "Brand Foundation",
       "task": "Finalize company name & DBA registration",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -79,8 +87,12 @@
       "phase": "Phase 1",
       "category": "Brand Foundation",
       "task": "Develop brand identity guidelines",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -96,8 +108,12 @@
       "phase": "Phase 1",
       "category": "Brand Foundation",
       "task": "Commission logo design",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -113,8 +129,12 @@
       "phase": "Phase 1",
       "category": "Brand Foundation",
       "task": "Create brand story / founder narrative",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -130,8 +150,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Register LLC / Corporation in Maryland",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1-2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -147,8 +171,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Obtain EIN from IRS",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -164,8 +192,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Open business bank account",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -181,8 +213,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Draft Operating Agreement / bylaws",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -198,8 +234,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Secure necessary business licenses (MD)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -215,8 +255,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Obtain alarm dealer/installer license (MD COMAR)",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "4-6 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -232,8 +276,12 @@
       "phase": "Phase 1",
       "category": "Legal & Business Setup",
       "task": "Set up accounting software (QuickBooks)",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -249,8 +297,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Finalize base kit components & BOM ($350 kit)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -266,8 +318,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Source hardware suppliers & negotiate pricing",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -283,8 +339,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Define 3 monitoring tiers & pricing ($35/mo base)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -300,8 +360,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Select monitoring central station partner",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -317,8 +381,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Develop kit assembly & QC checklist",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -334,8 +402,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Create product packaging design",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -351,8 +423,12 @@
       "phase": "Phase 1",
       "category": "Product Development",
       "task": "Draft user installation guide / manual",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -368,8 +444,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Purchase domain name(s)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -385,8 +465,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Set up business email (Google Workspace)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -402,8 +486,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Build e-commerce website (Shopify/WooCommerce)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "4 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -419,8 +507,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Set up CRM (HubSpot or similar)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -436,8 +528,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Set up payment processing (Stripe/Square)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -453,8 +549,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Configure subscription billing for monitoring plans",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -470,8 +570,12 @@
       "phase": "Phase 1",
       "category": "Digital Infrastructure",
       "task": "Set up business social media accounts",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -487,8 +591,12 @@
       "phase": "Phase 1",
       "category": "Team & Operations",
       "task": "Define roles & responsibilities",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -504,8 +612,12 @@
       "phase": "Phase 1",
       "category": "Team & Operations",
       "task": "Create internal communication workflow",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -521,8 +633,12 @@
       "phase": "Phase 1",
       "category": "Team & Operations",
       "task": "Build project management system",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -538,8 +654,12 @@
       "phase": "Phase 1",
       "category": "Team & Operations",
       "task": "Draft customer service SOPs",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -555,8 +675,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Develop content strategy & calendar",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -572,8 +696,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Film founder story video",
-      "owner": "Jeremiah (Video)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -589,8 +717,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Create 30-day social media launch content batch",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -606,8 +738,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Write website copy (all pages)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -623,8 +759,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Design brand photography / product photos",
-      "owner": "Jeremiah (Video)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -640,8 +780,12 @@
       "phase": "Phase 1",
       "category": "Content & Marketing Prep",
       "task": "Set up email marketing platform",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -657,8 +801,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Soft launch website & take first orders",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -674,8 +822,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Execute social media launch campaign",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -691,8 +843,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Send launch email to waitlist",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -708,8 +864,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Publish Dad's founder story video",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -725,8 +885,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Run targeted Facebook/Instagram ads (MD)",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -742,8 +906,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Partner with MD real estate agents",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "3 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -759,8 +927,12 @@
       "phase": "Phase 2",
       "category": "Launch Execution",
       "task": "Pitch local MD news / media",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -776,8 +948,12 @@
       "phase": "Phase 2",
       "category": "Sales & Revenue",
       "task": "Process first customer orders end-to-end",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -793,8 +969,12 @@
       "phase": "Phase 2",
       "category": "Sales & Revenue",
       "task": "Onboard first monitoring subscribers",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -810,8 +990,12 @@
       "phase": "Phase 2",
       "category": "Sales & Revenue",
       "task": "Implement upsell flow (kit → monitoring)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -827,8 +1011,12 @@
       "phase": "Phase 2",
       "category": "Sales & Revenue",
       "task": "Create referral / affiliate program",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -844,8 +1032,12 @@
       "phase": "Phase 2",
       "category": "Sales & Revenue",
       "task": "Launch bundle offers (kit + 3mo monitoring)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -861,8 +1053,12 @@
       "phase": "Phase 2",
       "category": "Community & Engagement",
       "task": "Launch community engagement program",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -878,8 +1074,12 @@
       "phase": "Phase 2",
       "category": "Community & Engagement",
       "task": "Host virtual home security workshop",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "2 weeks prep",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -895,8 +1095,12 @@
       "phase": "Phase 2",
       "category": "Community & Engagement",
       "task": "Build community Facebook Group",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -912,8 +1116,12 @@
       "phase": "Phase 2",
       "category": "Community & Engagement",
       "task": "Collect & publish first customer testimonials",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -929,8 +1137,12 @@
       "phase": "Phase 2",
       "category": "Content Production",
       "task": "Maintain weekly social content cadence",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -946,8 +1158,12 @@
       "phase": "Phase 2",
       "category": "Content Production",
       "task": "Produce 'Home Security Tips' video series",
-      "owner": "Jeremiah (Video)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -963,8 +1179,12 @@
       "phase": "Phase 2",
       "category": "Content Production",
       "task": "Launch blog / SEO content",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -980,8 +1200,12 @@
       "phase": "Phase 2",
       "category": "Content Production",
       "task": "Create TikTok / Reels strategy",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -997,8 +1221,12 @@
       "phase": "Phase 2",
       "category": "Operations & Fulfillment",
       "task": "Establish order fulfillment workflow",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1014,8 +1242,12 @@
       "phase": "Phase 2",
       "category": "Operations & Fulfillment",
       "task": "Set up inventory tracking system",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1031,8 +1263,12 @@
       "phase": "Phase 2",
       "category": "Operations & Fulfillment",
       "task": "Negotiate shipping rates",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1048,8 +1284,12 @@
       "phase": "Phase 2",
       "category": "Operations & Fulfillment",
       "task": "Implement returns & warranty policy",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1065,8 +1305,12 @@
       "phase": "Phase 2",
       "category": "Metrics & KPIs",
       "task": "Set up Google Analytics & conversion tracking",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "3 days",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1082,8 +1326,12 @@
       "phase": "Phase 2",
       "category": "Metrics & KPIs",
       "task": "Define KPI dashboard (revenue, CAC, LTV, churn)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1099,8 +1347,12 @@
       "phase": "Phase 2",
       "category": "Metrics & KPIs",
       "task": "Monthly financial review & P&L reporting",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "Monthly",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1116,8 +1368,12 @@
       "phase": "Phase 3",
       "category": "Product Expansion",
       "task": "Launch premium kit ($500-600 price point)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "6-8 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1133,8 +1389,12 @@
       "phase": "Phase 3",
       "category": "Product Expansion",
       "task": "Add outdoor camera add-on SKU",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "4 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1150,8 +1410,12 @@
       "phase": "Phase 3",
       "category": "Product Expansion",
       "task": "Develop smart home integration (Alexa/Google)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "8-12 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1167,8 +1431,12 @@
       "phase": "Phase 3",
       "category": "Product Expansion",
       "task": "Explore white-labeling for property managers",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "8 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1184,8 +1452,12 @@
       "phase": "Phase 3",
       "category": "Geographic Expansion",
       "task": "Expand marketing to DC Metro & NoVA",
-      "owner": "Jada (Social)",
+      "owner": [
+        "Jada (Social)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1201,8 +1473,12 @@
       "phase": "Phase 3",
       "category": "Geographic Expansion",
       "task": "Research additional state licensing",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1218,8 +1494,12 @@
       "phase": "Phase 3",
       "category": "Geographic Expansion",
       "task": "Develop regional partnership strategy",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "4 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1235,8 +1515,12 @@
       "phase": "Phase 3",
       "category": "Team & Staffing",
       "task": "Hire part-time customer support rep",
-      "owner": "Mom (PM)",
+      "owner": [
+        "Mom (PM)"
+      ],
       "time": "4-6 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1252,8 +1536,12 @@
       "phase": "Phase 3",
       "category": "Team & Staffing",
       "task": "Hire or contract installation technician(s)",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "4-6 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1269,8 +1557,12 @@
       "phase": "Phase 3",
       "category": "Channel Partnerships",
       "task": "Pitch home builders & developers",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1286,8 +1578,12 @@
       "phase": "Phase 3",
       "category": "Channel Partnerships",
       "task": "Develop insurance company partnership",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "8-12 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1303,8 +1599,12 @@
       "phase": "Phase 3",
       "category": "Channel Partnerships",
       "task": "Explore mortgage lender co-marketing",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "4 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1320,8 +1620,12 @@
       "phase": "Phase 3",
       "category": "Brand Authority",
       "task": "Pursue press coverage (Forbes, Black Enterprise)",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1337,8 +1641,12 @@
       "phase": "Phase 3",
       "category": "Brand Authority",
       "task": "Apply for business awards",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "Quarterly",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1354,8 +1662,12 @@
       "phase": "Phase 3",
       "category": "Brand Authority",
       "task": "Launch podcast or YouTube series",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "6-8 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1371,8 +1683,12 @@
       "phase": "Phase 3",
       "category": "Financial & Legal",
       "task": "Conduct formal financial audit",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "2-4 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1388,8 +1704,12 @@
       "phase": "Phase 3",
       "category": "Financial & Legal",
       "task": "Explore small business grants (MD, SBA, MBDA)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1405,8 +1725,12 @@
       "phase": "Phase 3",
       "category": "Financial & Legal",
       "task": "Review IP / trademark for Homefront Watch",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "4-6 weeks",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1419,11 +1743,15 @@
     {
       "id": 82,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Technology & Innovation",
       "task": "Develop proprietary mobile app (iOS & Android)",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "6-12 months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1436,11 +1764,15 @@
     {
       "id": 83,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Technology & Innovation",
       "task": "Explore AI-powered threat detection",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "12+ months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1453,11 +1785,15 @@
     {
       "id": 84,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Technology & Innovation",
       "task": "Build B2B SaaS platform for property managers",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "12+ months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1470,11 +1806,15 @@
     {
       "id": 85,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Scale & Exit Strategy",
       "task": "Explore franchise model",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "2-3 years",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1487,11 +1827,15 @@
     {
       "id": 86,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Scale & Exit Strategy",
       "task": "Evaluate national retail distribution",
-      "owner": "Shaun (COO)",
+      "owner": [
+        "Shaun (COO)"
+      ],
       "time": "18+ months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1504,11 +1848,15 @@
     {
       "id": 87,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Scale & Exit Strategy",
       "task": "Develop succession & legacy plan",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "Ongoing",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1521,11 +1869,15 @@
     {
       "id": 88,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Community Impact",
       "task": "Launch 'Protect Your Block' initiative",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "12+ months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1538,11 +1890,15 @@
     {
       "id": 89,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Community Impact",
       "task": "Establish Homefront Watch Foundation",
-      "owner": "Dad (CEO)",
+      "owner": [
+        "Dad (CEO)"
+      ],
       "time": "2-3 years",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1555,11 +1911,15 @@
     {
       "id": 90,
       "parentId": null,
-      "phase": "Future",
+      "phase": "Backlog",
       "category": "Community Impact",
       "task": "Partner with HBCU programs",
-      "owner": "Tia (CE Dir.)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
       "time": "12+ months",
+      "blocker": "",
+      "dependsOn": null,
       "notes": "",
       "status": "Not Started",
       "priority": "",
@@ -1568,6 +1928,888 @@
       "dueDate": "",
       "pct": 0,
       "order": 890
+    },
+    {
+      "id": 91,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Legal & Business Setup",
+      "task": "Obtain general liability business insurance",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 900
+    },
+    {
+      "id": 92,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Legal & Business Setup",
+      "task": "Register with MD Home Improvement Commission (MHIC)",
+      "owner": [
+        "Dad (CEO)"
+      ],
+      "time": "3-4 weeks",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 910
+    },
+    {
+      "id": 93,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Legal & Business Setup",
+      "task": "Draft customer monitoring agreement / terms of service",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 920
+    },
+    {
+      "id": 94,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Legal & Business Setup",
+      "task": "Draft website privacy policy & terms of use",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 930
+    },
+    {
+      "id": 95,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Digital Infrastructure",
+      "task": "Set up Google Business Profile",
+      "owner": [
+        "Jada (Social)"
+      ],
+      "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 940
+    },
+    {
+      "id": 96,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Digital Infrastructure",
+      "task": "Set up Google Search Console & submit sitemap",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 day",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 950
+    },
+    {
+      "id": 97,
+      "parentId": null,
+      "phase": "Phase 2",
+      "category": "Sales & Revenue",
+      "task": "Set up customer review strategy (Google, Trustpilot)",
+      "owner": [
+        "Tia (CE Dir.)"
+      ],
+      "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 960
+    },
+    {
+      "id": 98,
+      "parentId": null,
+      "phase": "Phase 2",
+      "category": "Sales & Revenue",
+      "task": "Build pre-purchase FAQ / objection handler on website",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 week",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 970
+    },
+    {
+      "id": 99,
+      "parentId": null,
+      "phase": "Phase 2",
+      "category": "Sales & Revenue",
+      "task": "Set up Amazon listing for base kit",
+      "owner": [
+        "Jada (Social)"
+      ],
+      "time": "2 weeks",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 980
+    },
+    {
+      "id": 100,
+      "parentId": null,
+      "phase": "Phase 3",
+      "category": "Channel Partnerships",
+      "task": "Develop wholesale / dealer program for other installers",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "6-8 weeks",
+      "blocker": "",
+      "dependsOn": null,
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "order": 990
+    },
+    {
+      "id": 101,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Write founder story video script",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "2 days",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.1
+    },
+    {
+      "id": 102,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Scout filming location",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.11
+    },
+    {
+      "id": 103,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Record Dad's on-camera interview",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.12
+    },
+    {
+      "id": 104,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Record family team segment",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.13
+    },
+    {
+      "id": 105,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film product & kit b-roll footage",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.14000000000004
+    },
+    {
+      "id": 106,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Edit full founder story video (3-5 min)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "3 days",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.15000000000003
+    },
+    {
+      "id": 107,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Create short-form cut (60 sec) for Reels/TikTok",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.16
+    },
+    {
+      "id": 108,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Add captions, graphics & music",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 days",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.17
+    },
+    {
+      "id": 109,
+      "parentId": 32,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Export finals & upload to shared drive",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 310.18
+    },
+    {
+      "id": 110,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film 'Meet the Family' team introduction video",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 days",
+      "notes": "Introduce each family member and their role in Homefront Watch",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311
+    },
+    {
+      "id": 111,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Dad (CEO)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.1
+    },
+    {
+      "id": 112,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Shaun (COO)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.11
+    },
+    {
+      "id": 113,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Tia",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.12
+    },
+    {
+      "id": 114,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Jada",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.13
+    },
+    {
+      "id": 115,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Jeremiah",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.14000000000004
+    },
+    {
+      "id": 116,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film individual intro for Mom (PM)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.15000000000003
+    },
+    {
+      "id": 117,
+      "parentId": 110,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Edit & produce final team intro video",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 311.16
+    },
+    {
+      "id": 118,
+      "parentId": null,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film product unboxing & DIY installation walkthrough video",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "3 days",
+      "notes": "Core trust-builder for D2C — shows how easy installation is",
+      "status": "Not Started",
+      "priority": "High",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1370
+    },
+    {
+      "id": 119,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Prepare product kit for unboxing shoot",
+      "owner": [
+        "Shaun (COO)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1380
+    },
+    {
+      "id": 120,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film unboxing & what's in the box",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1390.01
+    },
+    {
+      "id": 121,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film step-by-step DIY installation",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "3 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1400.02
+    },
+    {
+      "id": 122,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Film 'How monitoring works' explainer segment",
+      "owner": [
+        "Dad (CEO)"
+      ],
+      "time": "2 hours",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1410.03
+    },
+    {
+      "id": 123,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Edit full installation walkthrough (5-8 min)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 days",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1420.04
+    },
+    {
+      "id": 124,
+      "parentId": 118,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Create short unboxing cut for social",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 1430.05
+    },
+    {
+      "id": 125,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Dad (CEO)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.1
+    },
+    {
+      "id": 126,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Shaun (COO)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.11
+    },
+    {
+      "id": 127,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Tia",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.12
+    },
+    {
+      "id": 128,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Jada",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.13
+    },
+    {
+      "id": 129,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Jeremiah",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.14000000000004
+    },
+    {
+      "id": 130,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Professional headshots — Mom (PM)",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 hour",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.15000000000003
+    },
+    {
+      "id": 131,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Product flat lay & lifestyle photography",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "1 day",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.16
+    },
+    {
+      "id": 132,
+      "parentId": 35,
+      "phase": "Phase 1",
+      "category": "Content & Marketing Prep",
+      "task": "Edit & retouch all final photos",
+      "owner": [
+        "Jeremiah (Video)"
+      ],
+      "time": "2 days",
+      "notes": "",
+      "status": "Not Started",
+      "priority": "",
+      "done": false,
+      "startDate": "",
+      "dueDate": "",
+      "pct": 0,
+      "blocker": "",
+      "dependsOn": null,
+      "order": 340.17
     }
   ]
 }
