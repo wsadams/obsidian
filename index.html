@@ -40,7 +40,8 @@
   --p-high:#E05252;--p-med:#E8A430;--p-low:#5B9BD5;
   /* typography — editable via Settings */
   --title-size:22px;--subtitle-size:10px;--body-size:13px;--table-size:12.5px;--body-weight:400;
-  --logo-padding:0px;
+  --logo-pad-x:0px;
+  --logo-pad-y:0px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--offwhite);min-height:100vh;font-size:var(--body-size);font-weight:var(--body-weight);}
@@ -63,11 +64,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--offwhit
 #savedFlash.show{opacity:1;}
 
 /* ── HEADER ────────────────────────────────────────────────── */
-header{background:linear-gradient(135deg,#0A1525,#0F1E36 50%,#162845);border-bottom:2px solid var(--acc);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:300;box-shadow:0 4px 24px rgba(0,0,0,.5);}
+header{background:linear-gradient(135deg,#0A1525,#0F1E36 50%,#162845);border-bottom:2px solid var(--acc);padding:0 24px;display:flex;align-items:center;justify-content:space-between;min-height:64px;position:sticky;top:0;z-index:300;box-shadow:0 4px 24px rgba(0,0,0,.5);}
 .logo{display:flex;align-items:center;gap:10px;}
 .logo-img{height:36px;width:36px;border-radius:6px;object-fit:contain;display:none;}
 .logo-img.visible{display:block;}
-.logo-text{padding:var(--logo-padding);}
+.logo-text{padding:var(--logo-pad-y) var(--logo-pad-x);}
 .logo-text .logo-name{font-family:'Bebas Neue',sans-serif;font-size:var(--title-size);letter-spacing:2px;color:#fff;line-height:1;}
 .logo-text .logo-sub{font-size:var(--subtitle-size);color:var(--acc2);letter-spacing:2.5px;text-transform:uppercase;font-weight:500;margin-top:2px;}
 .hdr-right{display:flex;gap:7px;align-items:center;}
@@ -329,7 +330,7 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.0</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
@@ -448,7 +449,6 @@ td input[type=date].ci{color-scheme:dark;}
           <div class="field"><label>App Title</label><input type="text" id="setTitle" placeholder="Homefront Watch" oninput="previewBranding()"></div>
           <div class="field"><label>Subtitle</label><input type="text" id="setSubtitle" placeholder="Intelligent Surveillance Corp…" oninput="previewBranding()"></div>
           <div class="field"><label>Logo Image URL (optional)</label><input type="text" id="setLogoUrl" placeholder="https://…/logo.png" oninput="previewBranding()"></div>
-          <div class="field"><label>Version label</label><input type="text" id="setVersion" placeholder="v2.0" oninput="previewBranding()"></div>
         </div>
         <div class="settings-grid" style="margin-top:12px">
           <div class="field">
@@ -842,7 +842,7 @@ async function saveSettingsToSb(){
     },
     palette: document.documentElement.dataset.palette||'gold',
     default_phase: defaultPhase,
-    logo_padding: getComputedStyle(document.documentElement).getPropertyValue('--logo-padding').trim()
+    logo_padding: getComputedStyle(document.documentElement).getPropertyValue('--logo-pad-y').trim()
   };
   try {
     await sbFetch('settings?id=eq.1', {method:'PATCH', body:JSON.stringify(row)});
@@ -1602,7 +1602,6 @@ function loadSettingsPage(){
   document.getElementById('setTitle').value=appTitle;
   document.getElementById('setSubtitle').value=appSubtitle;
   document.getElementById('setLogoUrl').value=logoUrl;
-  document.getElementById('setVersion').value=appVersion;
   // Font sliders
   const cs=getComputedStyle(document.documentElement);
   const setSlider=(id,valId,val)=>{const n=parseInt(val);document.getElementById(id).value=n;document.getElementById(valId).textContent=val;};
@@ -1630,7 +1629,7 @@ function loadSettingsPage(){
     if(defaultPhase==='__all__') dpSel.value='__all__';
   }
   // Logo padding slider
-  const curPad = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--logo-padding'))||0;
+  const curPad = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--logo-pad-y'))||0;
   const fsLP = document.getElementById('fsLogoPadding');
   const fvLP = document.getElementById('fvLogoPadding');
   if(fsLP) fsLP.value = curPad;
@@ -1693,9 +1692,8 @@ function removeTag(idx){allTags.splice(idx,1);renderSettingsTags();saveSettingsT
 function previewBranding(){
   const t=document.getElementById('setTitle').value||'Homefront Watch';
   const s=document.getElementById('setSubtitle').value||'';
-  const v=document.getElementById('setVersion').value||'';
   const logo=document.getElementById('setLogoUrl').value||'';
-  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">${esc(v)}</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span>`;
   document.getElementById('headerSubtitle').textContent=s;
   const img=document.getElementById('logoImg');
   if(logo){img.src=logo;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -1703,7 +1701,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion=document.getElementById('setVersion').value.trim()||'v2.0';
+  appVersion='v2.02';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   applyBrandingToHeader();
@@ -1711,7 +1709,8 @@ async function saveBranding(){
 }
 function applyLogoPadding(val){
   const px = parseInt(val)||0;
-  document.documentElement.style.setProperty('--logo-padding', px+'px');
+  document.documentElement.style.setProperty('--logo-pad-x', px+'px');
+  document.documentElement.style.setProperty('--logo-pad-y', px+'px');
   const el = document.getElementById('fsLogoPadding');
   const lbl = document.getElementById('fvLogoPadding');
   if(el) el.value = px;
@@ -1720,10 +1719,11 @@ function applyLogoPadding(val){
 function previewLogoPadding(){
   const val = document.getElementById('fsLogoPadding').value;
   document.getElementById('fvLogoPadding').textContent = val+'px';
-  document.documentElement.style.setProperty('--logo-padding', val+'px');
+  document.documentElement.style.setProperty('--logo-pad-x', val+'px');
+  document.documentElement.style.setProperty('--logo-pad-y', val+'px');
 }
 function applyBrandingToHeader(){
-  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">${esc(appVersion)}</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span>`;
   document.getElementById('headerSubtitle').textContent=appSubtitle;
   const img=document.getElementById('logoImg');
   if(logoUrl){img.src=logoUrl;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
