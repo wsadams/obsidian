@@ -757,8 +757,6 @@ async function loadFromSupabase(){
         logoUrl = s.logo_url || '';
         if(s.font_settings) applyFontSettings(s.font_settings);
         if(s.palette) applyPalette(s.palette, false);
-        if(s.default_phase) defaultPhase=s.default_phase;
-        if(s.logo_padding!==undefined) applyLogoPadding(s.logo_padding);
         applyBrandingToHeader();
       }
     }
@@ -839,10 +837,10 @@ async function saveSettingsToSb(){
       subtitleSize: getComputedStyle(document.documentElement).getPropertyValue('--subtitle-size').trim(),
       tableSize: getComputedStyle(document.documentElement).getPropertyValue('--table-size').trim(),
       bodyWeight: getComputedStyle(document.documentElement).getPropertyValue('--body-weight').trim(),
+      logoPadding: getComputedStyle(document.documentElement).getPropertyValue('--logo-pad-y').trim(),
+      defaultPhase: defaultPhase
     },
-    palette: document.documentElement.dataset.palette||'gold',
-    default_phase: defaultPhase,
-    logo_padding: getComputedStyle(document.documentElement).getPropertyValue('--logo-pad-y').trim()
+    palette: document.documentElement.dataset.palette||'gold'
   };
   try {
     await sbFetch('settings?id=eq.1', {method:'PATCH', body:JSON.stringify(row)});
@@ -1747,6 +1745,8 @@ function applyFontSettings(fs){
   if(fs.bodySize)document.documentElement.style.setProperty('--body-size',fs.bodySize);
   if(fs.tableSize)document.documentElement.style.setProperty('--table-size',fs.tableSize);
   if(fs.bodyWeight)document.documentElement.style.setProperty('--body-weight',fs.bodyWeight);
+  if(fs.logoPadding!==undefined) applyLogoPadding(fs.logoPadding);
+  if(fs.defaultPhase) defaultPhase=fs.defaultPhase;
 }
 function applyPalette(pid,save=false){
   document.documentElement.dataset.palette=pid;
