@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.0                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -314,6 +314,19 @@ td input[type=date].ci{color-scheme:dark;}
 .tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
 
 /* ── TOAST ──────────────────────────────────────────────────── */
+/* audit log */
+.audit-row td{padding:7px 10px;font-size:12px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.03);}
+.audit-row:hover td{background:rgba(255,255,255,.025);}
+.audit-action{display:inline-block;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;}
+.aa-added{background:rgba(60,184,114,.18);color:#6FD89A;}
+.aa-edited{background:rgba(74,140,247,.18);color:#7EB8FA;}
+.aa-deleted{background:rgba(231,76,60,.18);color:#F08080;}
+.aa-status{background:rgba(232,164,48,.18);color:#F0C060;}
+.aa-kanban{background:rgba(155,111,212,.18);color:#C4A0E8;}
+.aa-note{background:rgba(201,168,76,.18);color:var(--acc2);}
+.aa-settings{background:rgba(100,116,139,.18);color:#94A3B8;}
+.aa-sanitize{background:rgba(231,76,60,.25);color:#F08080;}
+
 .toast{position:fixed;bottom:22px;right:22px;background:#1B3A6B;border:1px solid var(--acc);border-radius:8px;padding:10px 15px;font-size:12.5px;color:#fff;transform:translateY(60px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 .empty{text-align:center;padding:44px 20px;color:var(--mid);font-size:13px;}
@@ -330,16 +343,18 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
   <div class="hdr-right">
+    <span id="userChip" onclick="changeUser()" title="Click to change user" style="font-size:11px;color:var(--mid);border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:3px 10px;cursor:pointer;transition:all .15s;white-space:nowrap" onmouseover="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='var(--mid)'">👤 —</span>
     <button onclick="toggleFullscreen()" id="fsBtn" title="Enter fullscreen" style="background:none;border:1px solid rgba(255,255,255,.1);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#7A8AA0;cursor:pointer;font-size:14px;transition:all .14s;" onmouseover="this.style.borderColor='var(--acc2)';this.style.color='var(--acc2)'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='#7A8AA0'">⛶</button>
     <div style="display:flex;align-items:center;gap:5px">
       <div class="sync-dot synced" id="syncDot"></div>
       <span class="sync-label" id="syncLabel">synced</span>
     </div>
+
     <div class="sep"></div>
     <div class="view-toggle" id="viewToggle">
       <button class="view-btn active" onclick="setView('table',this)">⊞ Table</button>
@@ -534,9 +549,69 @@ td input[type=date].ci{color-scheme:dark;}
         </div>
       </div>
 
+      <!-- Audit Log -->
+      <div class="settings-section">
+        <h3>Audit Log</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <p style="font-size:12px;color:var(--mid)">Last 200 changes — who did what and when.</p>
+          <div style="display:flex;gap:8px">
+            <select id="auditFilterUser" class="fsel" onchange="renderAuditLog()" style="font-size:12px;padding:5px 8px">
+              <option value="">All Users</option>
+            </select>
+            <select id="auditFilterAction" class="fsel" onchange="renderAuditLog()" style="font-size:12px;padding:5px 8px">
+              <option value="">All Actions</option>
+              <option value="task_added">Task Added</option>
+              <option value="task_edited">Task Edited</option>
+              <option value="task_deleted">Task Deleted</option>
+              <option value="task_done">Task Completed</option>
+              <option value="status_changed">Status Changed</option>
+              <option value="kanban_move">Kanban Move</option>
+              <option value="note_saved">Note Saved</option>
+              <option value="settings_saved">Settings Saved</option>
+              <option value="sanitize">Sanitize Run</option>
+              <option value="undo">Undo</option>
+              <option value="redo">Redo</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="loadAuditLog()">↻ Refresh</button>
+          </div>
+        </div>
+        <div id="auditLogWrap" style="background:rgba(0,0,0,.15);border:1px solid var(--border);border-radius:9px;overflow:hidden;max-height:420px;overflow-y:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead style="position:sticky;top:0;background:#0F1E36;z-index:1">
+              <tr>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;white-space:nowrap;border-bottom:1px solid var(--border)">When</th>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border)">Who</th>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border)">Action</th>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border)">Description</th>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border)">Change</th>
+                <th style="padding:9px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border)">Browser</th>
+              </tr>
+            </thead>
+            <tbody id="auditTbody">
+              <tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mid);font-size:13px">Loading audit log…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Supabase -->
       <div class="settings-section">
         <h3>Database Connection</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;">
+          <div>
+            <div style="font-size:13px;font-weight:500">Supabase Sync</div>
+            <div style="font-size:11px;color:var(--mid);margin-top:2px">Turn OFF when previewing locally to suppress connection errors</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <span style="font-size:12px;color:var(--mid)" id="sbToggleLabel">ON</span>
+            <div style="position:relative;width:40px;height:22px">
+              <input type="checkbox" id="sbToggle" checked onchange="toggleSupabase(this.checked)"
+                style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1">
+              <div id="sbToggleTrack" style="position:absolute;inset:0;background:var(--acc);border-radius:99px;transition:background .2s"></div>
+              <div id="sbToggleThumb" style="position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;transform:translateX(18px)"></div>
+            </div>
+          </label>
+        </div>
         <div class="settings-grid">
           <div class="field"><label>Supabase URL</label><input type="text" id="setSbUrl" placeholder="https://xxx.supabase.co"></div>
           <div class="field"><label>Anon Key</label><input type="password" id="setSbKey" placeholder="sb_publishable_…"></div>
@@ -640,6 +715,17 @@ td input[type=date].ci{color-scheme:dark;}
   </div>
 </div>
 
+<!-- WHO ARE YOU MODAL -->
+<div class="overlay" id="whoModal" style="z-index:1100">
+  <div class="modal" style="width:400px">
+    <div class="mhdr"><h2>👋 Who Are You?</h2></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:4px">Select your name so we can track who made changes. This is saved to your browser and only asked once.</p>
+      <div id="whoGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- PRINT MODAL -->
 <div class="overlay" id="printModal">
   <div class="modal" style="width:400px">
@@ -680,9 +766,12 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.0', logoUrl='';
+let appVersion='v2.1', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
+let currentUser=localStorage.getItem('hw_user')||'';
+let auditLog=[];
+let supabaseEnabled=true; // set to false in Settings to suppress errors when previewing locally
 let defaultPhase='Phase 1';
 let sortCol=null, sortDir=1, sortByOrder=true;
 let dragSrcId=null, kbDragId=null, expanded=new Set();
@@ -740,6 +829,7 @@ function showSavedFlash(){
 
 // ── LOAD FROM SUPABASE ────────────────────────────────────────
 async function loadFromSupabase(){
+  if(!supabaseEnabled){ setSyncDot('offline'); if(!tasks.length) initSeedData(); return; }
   setSyncDot('saving');
   try {
     // Load settings
@@ -799,6 +889,7 @@ async function loadFromSupabase(){
 
 // ── SAVE TASK TO SUPABASE ─────────────────────────────────────
 async function saveTaskToSb(t){
+  if(!supabaseEnabled) return;
   setSyncDot('saving');
   const row = {
     task_id: t.id, parent_id: t.parentId||null,
@@ -827,6 +918,7 @@ async function deleteTaskFromSb(t){
 }
 
 async function saveSettingsToSb(){
+  if(!supabaseEnabled) return;
   setSyncDot('saving');
   const row = {
     id:1, app_title:appTitle, app_subtitle:appSubtitle, app_version:appVersion,
@@ -845,6 +937,7 @@ async function saveSettingsToSb(){
   try {
     await sbFetch('settings?id=eq.1', {method:'PATCH', body:JSON.stringify(row)});
     setSyncDot('synced'); showSavedFlash();
+    logAudit('Settings Saved', 'App settings updated');
   } catch(e){ setSyncDot('error'); console.warn(e); }
 }
 
@@ -916,6 +1009,7 @@ function undo(){
   tasks=s.tasks;phases=s.phases;people=s.people;allTags=s.allTags;currentTab=s.currentTab;expanded=new Set(s.expanded);
   nextId=Math.max(...tasks.map(t=>t.id),0)+1;
   rebuildAll();updateUndoBtn();
+  logAudit('Undo', `Undid: ${s.label}`);
   syncAllTasksToSb();
   toast(`↩ Undid: ${s.label}`);
 }
@@ -926,6 +1020,7 @@ function redo(){
   tasks=s.tasks;phases=s.phases;people=s.people;allTags=s.allTags;currentTab=s.currentTab;expanded=new Set(s.expanded);
   nextId=Math.max(...tasks.map(t=>t.id),0)+1;
   rebuildAll();updateUndoBtn();
+  logAudit('Redo', `Redid: ${s.label}`);
   syncAllTasksToSb();
   toast(`↪ Redid: ${s.label}`);
 }
@@ -1136,7 +1231,8 @@ function editPct(id,td){
     t.pct=v;
     if(v===100){t.done=true;t.status='Complete';}
     else if(t.done&&v<100){t.done=false;if(t.status==='Complete')t.status='In Progress';}
-    saveTaskToSb(t);renderTable();if(currentView==='kanban')renderKanban();toast('✓ % updated');
+    logAudit('Status Changed', `Task #${t.id} '${(t.task||'').slice(0,40)}' marked ${val?'Complete':'incomplete'}`,'',val?'Complete':'');
+  saveTaskToSb(t);renderTable();if(currentView==='kanban')renderKanban();toast('✓ % updated');
   };
   inp.addEventListener('blur',save);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}if(e.key==='Escape')renderTable();});
@@ -1159,8 +1255,10 @@ function ie(td,field,type,id){
   td.innerHTML='';td.appendChild(el);el.focus();if(el.select&&type!=='select'&&type!=='date')el.select();
   const save=()=>{
     snapshot('Edit '+field);
+    const oldVal=t[field];
     t[field]=el.value;
     if(field==='status'){t.done=el.value==='Complete';if(el.value==='Complete')t.pct=100;else if(t.pct===100)t.pct=0;}
+    logAudit('Task Edited',`Task #${t.id} '${(t.task||'').slice(0,40)}' — ${field} changed`,String(oldVal||''),String(el.value||''));
     saveTaskToSb(t);buildTabs();updateStats();buildFilters();renderTable();
     if(currentView==='kanban')renderKanban();toast('✓ Updated');
   };
@@ -1193,6 +1291,7 @@ function toggleDone(id,val){
   t.done=val;
   if(val){t.status='Complete';t.pct=100;}
   else{if(t.status==='Complete')t.status='Not Started';if(t.pct===100)t.pct=0;}
+  logAudit('Status Changed', `Task #${t.id} '${(t.task||'').slice(0,40)}' marked ${val?'Complete':'incomplete'}`,'',val?'Complete':'');
   saveTaskToSb(t);renderTable();if(currentView==='kanban')renderKanban();
 }
 function sortBy(col){sortByOrder=false;if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}document.querySelectorAll('thead th.sortable').forEach(th=>th.classList.remove('sort-asc','sort-desc'));event.currentTarget.classList.add(sortDir===1?'sort-asc':'sort-desc');renderTable();}
@@ -1318,6 +1417,7 @@ function saveTaskNote(){
   snapshot('Edit note');
   const t=tasks.find(x=>x.id===noteTaskId);
   if(t)t.notes=document.getElementById('noteTextarea').value;
+  logAudit('Note Saved', `Note updated on Task #${noteTaskId}`);
   saveTaskToSb(t);closeNotePop();renderTable();if(currentView==='kanban')renderKanban();toast('✓ Note saved');
 }
 
@@ -1386,6 +1486,8 @@ async function saveTask(){
   else{tasks.push(obj);if(parentId)expanded.add(parentId);}
   await saveTaskToSb(obj);
   await saveSettingsToSb();
+  const auditDesc = id ? `Task #${obj.id} '${obj.task.slice(0,50)}' edited` : `Task #${obj.id} '${obj.task.slice(0,50)}' added`;
+  logAudit(id?'Task Edited':'Task Added', auditDesc);
   rebuildAll();closeModal('taskModal');toast(id?'✓ Updated':'✓ Added');
 }
 async function deleteTask(id){
@@ -1398,6 +1500,8 @@ async function deleteTask(id){
   // delete subtasks from db
   for(const s of tasks.filter(x=>x.parentId===id)) await deleteTaskFromSb(s);
   await deleteTaskFromSb(t);
+  const _delT=tasks.find(x=>x.id===id);
+  logAudit('Task Deleted', `Task #${id} '${(_delT?.task||'').slice(0,50)}' deleted`);
   tasks=tasks.filter(x=>x.id!==id&&x.parentId!==id);
   expanded.delete(id);rebuildAll();toast('Deleted');
 }
@@ -1465,6 +1569,7 @@ async function kbDrop(e,status){
   snapshot('Kanban move');
   const t=tasks.find(x=>x.id===kbDragId);
   if(t){t.status=status;t.done=status==='Complete';if(status==='Complete')t.pct=100;else if(t.pct===100)t.pct=0;await saveTaskToSb(t);}
+  if(t) logAudit('Kanban Move', `Task #${t.id} '${(t.task||'').slice(0,40)}' → ${status}`, '', status);
   kbDragId=null;renderKanban();renderTable();updateStats();toast(`→ ${status}`);
 }
 function kbDE(){kbDragId=null;document.querySelectorAll('.kb-card').forEach(c=>c.classList.remove('dragging'));}
@@ -1634,6 +1739,11 @@ function loadSettingsPage(){
   if(fvLP) fvLP.textContent = curPad+'px';
   document.getElementById('setSbUrl').value=SB_URL;
   document.getElementById('setSbKey').value='';
+  // Sync supabase toggle UI
+  const sbTog = document.getElementById('sbToggle');
+  if(sbTog){ sbTog.checked = supabaseEnabled; toggleSupabase(supabaseEnabled); }
+  // Load audit log
+  loadAuditLog();
 }
 function renderSList(containerId,arr,type){
   document.getElementById(containerId).innerHTML=arr.map((item,i)=>`
@@ -1691,7 +1801,7 @@ function previewBranding(){
   const t=document.getElementById('setTitle').value||'Homefront Watch';
   const s=document.getElementById('setSubtitle').value||'';
   const logo=document.getElementById('setLogoUrl').value||'';
-  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1</span>`;
   document.getElementById('headerSubtitle').textContent=s;
   const img=document.getElementById('logoImg');
   if(logo){img.src=logo;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -1699,7 +1809,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion='v2.02';
+  appVersion='v2.1';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   applyBrandingToHeader();
@@ -1721,7 +1831,7 @@ function previewLogoPadding(){
   document.documentElement.style.setProperty('--logo-pad-y', val+'px');
 }
 function applyBrandingToHeader(){
-  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.02</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1</span>`;
   document.getElementById('headerSubtitle').textContent=appSubtitle;
   const img=document.getElementById('logoImg');
   if(logoUrl){img.src=logoUrl;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -1753,6 +1863,19 @@ function applyPalette(pid,save=false){
   document.querySelectorAll('.pal-chip').forEach(c=>c.classList.toggle('sel',c.dataset.pid===pid));
   if(save)saveSettingsToSb();
 }
+function toggleSupabase(enabled){
+  supabaseEnabled = enabled;
+  localStorage.setItem('hw_sb_enabled', enabled ? '1' : '0');
+  const lbl = document.getElementById('sbToggleLabel');
+  const track = document.getElementById('sbToggleTrack');
+  const thumb = document.getElementById('sbToggleThumb');
+  if(lbl) lbl.textContent = enabled ? 'ON' : 'OFF';
+  if(track) track.style.background = enabled ? 'var(--acc)' : 'rgba(255,255,255,.15)';
+  if(thumb) thumb.style.transform = enabled ? 'translateX(18px)' : 'translateX(0)';
+  setSyncDot(enabled ? 'synced' : 'offline');
+  toast(enabled ? '✓ Supabase sync enabled' : 'Supabase sync disabled');
+}
+
 function saveSbCredentials(){
   const url=document.getElementById('setSbUrl').value.trim();
   const key=document.getElementById('setSbKey').value.trim();
@@ -1779,6 +1902,7 @@ async function sanitizeTasks(){
     const parent=tasks.find(p=>p.id===t.parentId);
     return parent&&!parent.done;
   });
+  logAudit('Sanitize Run', `Removed ${completedParents.length} completed task(s)`);
   rebuildAll();toast(`✓ Removed ${completedParents.length} completed tasks`);
 }
 
@@ -1876,7 +2000,22 @@ function doPrint(){
   <div class="summary-bar"><div class="summary-pill"><strong>${filtered.filter(t=>t.done).length}</strong>Complete</div><div class="summary-pill"><strong>${filtered.filter(t=>t.status==='In Progress').length}</strong>In Progress</div><div class="summary-pill"><strong>${filtered.filter(t=>isOverdue(t.dueDate)&&!t.done).length}</strong>Overdue</div><div class="summary-pill"><strong>${filtered.length>0?Math.round(filtered.filter(t=>t.done).length/filtered.length*100):0}%</strong>Overall</div></div>
   <table><thead><tr><th>#</th><th>Task</th><th>Priority</th><th>Assignee(s)</th><th>Status</th><th>Due Date</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
   <div class="footer"><span>${appTitle} · ${appSubtitle}</span><span>Generated ${today} · File → Print → Save as PDF</span></div>
-  <script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script></body></html>`);
+  <script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script>
+<!-- WHO ARE YOU MODAL -->
+<div class="overlay" id="userPickerModal" style="z-index:9999">
+  <div class="modal" style="width:400px;text-align:center">
+    <div class="mhdr" style="justify-content:center;border-bottom:none;padding-bottom:6px">
+      <h2>Who are you?</h2>
+    </div>
+    <div class="mbody" style="align-items:center;gap:10px">
+      <p style="font-size:13px;color:var(--mid);line-height:1.6">Select your name so changes are tracked in the audit log. This is saved on your browser.</p>
+      <div id="userPickerBtns" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIT LOG SECTION (injected into settings) -->
+</body></html>`);
   win.document.close();closeModal('printModal');
 }
 
@@ -2045,6 +2184,7 @@ document.addEventListener('fullscreenchange',()=>{
 // Sync entire tasks array to Supabase after undo/redo
 // Strategy: delete all rows, re-insert everything cleanly
 async function syncAllTasksToSb(){
+  if(!supabaseEnabled) return;
   setSyncDot('saving');
   try {
     // Delete all existing task rows
@@ -2080,19 +2220,173 @@ async function syncAllTasksToSb(){
   }
 }
 
+
+// ══════════════════════════════════════════════════════════════
+//  AUDIT LOG
+// ══════════════════════════════════════════════════════════════
+
+// Save a single audit entry to Supabase
+async function logAudit(action, description, oldVal='', newVal=''){
+  if(!action||!description)return;
+  const entry = {
+    id: Date.now(),  // local temp id
+    created_at: new Date().toISOString(),
+    user_name: currentUser||'Unknown',
+    action,
+    description,
+    old_value: oldVal ? String(oldVal).slice(0,500) : null,
+    new_value: newVal ? String(newVal).slice(0,500) : null,
+    user_agent: navigator.userAgent.slice(0,300)
+  };
+  if(!supabaseEnabled){
+    // Local-only mode: prepend to in-memory log (clears on refresh)
+    auditLog.unshift(entry);
+    // Refresh the audit table if it's visible
+    if(currentPage==='settings') renderAuditLog();
+    return;
+  }
+  try {
+    await sbFetch('audit_log', {method:'POST', body:JSON.stringify(entry), prefer:'return=minimal'});
+  } catch(e){ console.warn('Audit log failed:', e); }
+}
+
+// Load last 200 entries from Supabase
+async function loadAuditLog(){
+  if(!supabaseEnabled){ renderAuditLog(); return; }
+  try {
+    const r = await sbFetch('audit_log?order=created_at.desc&limit=200');
+    if(r.ok){ auditLog = await r.json(); }
+  } catch(e){ console.warn('Load audit failed:', e); }
+  renderAuditLog();
+}
+
+// Render audit table in settings
+function renderAuditLog(){
+  const tbody = document.getElementById('auditTbody');
+  if(!tbody) return;
+
+  // Populate user filter
+  const uf = document.getElementById('auditFilterUser');
+  if(uf){
+    const curU = uf.value;
+    const users = [...new Set(auditLog.map(e=>e.user_name).filter(Boolean))].sort();
+    uf.innerHTML = '<option value="">All Users</option>' +
+      users.map(u=>`<option${u===curU?' selected':''}>${u}</option>`).join('');
+  }
+
+  const filterUser   = document.getElementById('auditFilterUser')?.value||'';
+  const filterAction = document.getElementById('auditFilterAction')?.value||'';
+
+  const filtered = auditLog.filter(e=>{
+    if(filterUser   && e.user_name !== filterUser)   return false;
+    if(filterAction && e.action    !== filterAction)  return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:22px;color:var(--mid);font-size:13px">No audit entries found.</td></tr>`;
+    return;
+  }
+
+  const ACTION_COLORS = {
+    'Task Added':     '#3CB872',
+    'Task Edited':    '#4A8CF7',
+    'Task Deleted':   '#E05252',
+    'Status Changed': '#E8A430',
+    'Kanban Move':    '#9B6FD4',
+    'Note Saved':     '#C9A84C',
+    'Settings Saved': '#64748B',
+    'Sanitize Run':   '#D4506A',
+    'Undo':           '#7A8AA0',
+    'Redo':           '#7A8AA0',
+  };
+
+  tbody.innerHTML = filtered.map(e=>{
+    const dt = new Date(e.created_at);
+    const dateStr = dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const timeStr = dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const col = ACTION_COLORS[e.action] || '#7A8AA0';
+    const ua = e.user_agent||'';
+    const browser = ua.includes('Chrome')?'Chrome':ua.includes('Firefox')?'Firefox':ua.includes('Safari')?'Safari':ua.includes('Edge')?'Edge':'Browser';
+    const os = ua.includes('Mac')?'Mac':ua.includes('Windows')?'Win':ua.includes('iPhone')||ua.includes('iPad')?'iOS':ua.includes('Android')?'Android':'';
+    const device = [browser, os].filter(Boolean).join(' / ');
+    const change = (e.old_value||e.new_value)
+      ? `<span style="color:var(--mid);font-size:10.5px">${e.old_value?`<span style="color:#E05252">${esc(e.old_value)}</span> → `:''}<span style="color:#3CB872">${esc(e.new_value||'')}</span></span>`
+      : '';
+    return `<tr class="audit-row">
+      <td style="white-space:nowrap;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--mid)">${dateStr}<br>${timeStr}</td>
+      <td><span class="audit-action" style="background:${col}22;color:${col};border-color:${col}44">${esc(e.action)}</span></td>
+      <td style="font-size:12.5px">${esc(e.description)}${change?`<div style="margin-top:3px">${change}</div>`:''}</td>
+      <td style="font-size:12px;font-weight:500;color:var(--acc2)">${esc(e.user_name||'—')}</td>
+      <td style="font-size:11px;color:var(--mid)">${esc(device)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── WHO ARE YOU modal ─────────────────────────────────────────
+function openWhoModal(){
+  const grid = document.getElementById('whoGrid');
+  if(grid){
+    grid.innerHTML = people.map(p=>`
+      <button class="btn btn-outline" style="justify-content:center;padding:12px;font-size:14px"
+        onclick="selectUser('${esc(p)}')">${esc(p)}</button>`).join('');
+  }
+  document.getElementById('whoModal').classList.add('open');
+}
+
+function selectUser(name){
+  currentUser = name;
+  localStorage.setItem('hw_user', name);
+  document.getElementById('whoModal').classList.remove('open');
+  // Update the user chip in header
+  const chip = document.getElementById('userChip');
+  if(chip) chip.textContent = '👤 ' + name;
+  toast(`✓ Signed in as ${name}`);
+  logAudit('Session', `${name} opened the dashboard`);
+}
+
+function changeUser(){
+  // Clear and re-prompt
+  localStorage.removeItem('hw_user');
+  currentUser = '';
+  openWhoModal();
+}
 async function init(){
   // Apply default palette immediately
   applyPalette('gold');
+  // Restore Supabase enabled state from localStorage
+  const sbStored = localStorage.getItem('hw_sb_enabled');
+  if(sbStored === '0'){ supabaseEnabled = false; }
   // Load from Supabase (falls back to seed if offline/empty)
   await loadFromSupabase();
   // Build UI
   currentTab=defaultPhase||'Phase 1';
   rebuildAll();
+  // Set user chip in header
+  const chip=document.getElementById('userChip');
+  if(chip) chip.textContent = currentUser ? '👤 '+currentUser : '👤 —';
+  // Show who-are-you modal if not set
+  if(!currentUser) openWhoModal();
   // Subscribe to realtime polling
   subscribeRealtime();
 }
 
 init();
 </script>
+
+<!-- WHO ARE YOU MODAL -->
+<div class="overlay" id="userPickerModal" style="z-index:9999">
+  <div class="modal" style="width:400px;text-align:center">
+    <div class="mhdr" style="justify-content:center;border-bottom:none;padding-bottom:6px">
+      <h2>Who are you?</h2>
+    </div>
+    <div class="mbody" style="align-items:center;gap:10px">
+      <p style="font-size:13px;color:var(--mid);line-height:1.6">Select your name so changes are tracked in the audit log. This is saved on your browser.</p>
+      <div id="userPickerBtns" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIT LOG SECTION (injected into settings) -->
 </body>
 </html>
