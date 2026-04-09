@@ -1,1 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="gold">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homefront Watch — Simple View v1.5</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║   HOMEFRONT WATCH — SIMPLE VIEW  v1.5.3                      ║
+║   Intelligent Surveillance Corp                              ║
+║   Supabase Project: nhqytnaevtynbkgypidb                     ║
+║   Reads from the same tasks, notes, settings tables as       ║
+║   the Advanced View (homefront_watch_v5)                     ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+<style>
+/* ── PALETTES ──────────────────────────────────────────────── */
+:root{
+  --acc:#C9A84C;--acc2:#E8CC80;--acc3:rgba(201,168,76,.13);--acc-b:rgba(201,168,76,.3);
+}
+[data-palette="gold"]    {--acc:#C9A84C;--acc2:#E8CC80;--acc3:rgba(201,168,76,.13);--acc-b:rgba(201,168,76,.3);}
+[data-palette="steel"]   {--acc:#4A8CF7;--acc2:#82B4FA;--acc3:rgba(74,140,247,.13);--acc-b:rgba(74,140,247,.3);}
+[data-palette="emerald"] {--acc:#3DAD7A;--acc2:#68D4A0;--acc3:rgba(61,173,122,.13);--acc-b:rgba(61,173,122,.3);}
+[data-palette="crimson"] {--acc:#D4506A;--acc2:#F08090;--acc3:rgba(212,80,106,.13);--acc-b:rgba(212,80,106,.3);}
+[data-palette="violet"]  {--acc:#8B5CF6;--acc2:#B48DFA;--acc3:rgba(139,92,246,.13);--acc-b:rgba(139,92,246,.3);}
+[data-palette="slate"]   {--acc:#64748B;--acc2:#94A3B8;--acc3:rgba(100,116,139,.13);--acc-b:rgba(100,116,139,.3);}
 
+/* ── BASE ──────────────────────────────────────────────────── */
+/* NOTE: contrast slider only affects this file — Advanced View
+   uses its own separate CSS variables and localStorage keys.    */
+:root{
+  --navy:#0F1E36;--bg2:#162845;--bg3:#1B2F4A;--bg4:#243558;
+  --offwhite:#F7F5F0;--mid:#7A7A7A;--border:rgba(255,255,255,.09);
+  --s-none:#4A8CF7;--s-prog:#E8A430;--s-hold:#9B6FD4;--s-done:#3CB872;
+  --p-high:#E05252;--p-med:#E8A430;--p-low:#5B9BD5;
+  --radius:10px;--radius-sm:6px;
+  --task-font-size:13.5px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--offwhite);min-height:100vh;font-size:13px;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:99px;}
+
+/* ── HEADER ────────────────────────────────────────────────── */
+header{
+  background:linear-gradient(135deg,#0A1525,#0F1E36 50%,#162845);
+  border-bottom:2px solid var(--acc);
+  padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:64px;position:sticky;top:0;z-index:300;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-img{height:36px;width:36px;border-radius:6px;object-fit:contain;display:none;}
+.logo-img.visible{display:block;}
+.logo-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff;line-height:1;}
+.logo-sub{font-size:10px;color:var(--acc2);letter-spacing:2.5px;text-transform:uppercase;font-weight:500;margin-top:2px;}
+.hdr-right{display:flex;gap:7px;align-items:center;}
+
+/* SYNC DOT */
+.sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s;}
+.sync-dot.synced{background:#4CAF78;}
+.sync-dot.saving{background:var(--acc);animation:sdpulse .8s infinite;}
+.sync-dot.error{background:#D06060;}
+.sync-dot.offline{background:#7A7A7A;}
+@keyframes sdpulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.sync-label{font-size:10px;color:#5A6A80;font-family:'DM Mono',monospace;}
+
+/* ── BUTTONS ────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .16s;white-space:nowrap;}
+.btn-gold{background:var(--acc);color:var(--navy);}.btn-gold:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--offwhite);border:1.5px solid rgba(255,255,255,.18);}.btn-outline:hover{border-color:var(--acc);color:var(--acc);}
+.btn-ghost{background:transparent;color:var(--mid);border:1.5px solid rgba(255,255,255,.1);}.btn-ghost:hover{color:var(--offwhite);border-color:rgba(255,255,255,.22);}
+.btn-danger{background:rgba(220,70,70,.1);color:#D06060;border:1px solid rgba(220,70,70,.2);}.btn-danger:hover{background:rgba(220,70,70,.2);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-advanced{background:var(--acc3);color:var(--acc2);border:1.5px solid var(--acc-b);}.btn-advanced:hover{background:var(--acc-b);color:#fff;}
+.sep{width:1px;height:22px;background:rgba(255,255,255,.1);margin:0 2px;}
+
+/* ── STATS BAR ─────────────────────────────────────────────── */
+.stats-strip{
+  display:flex;gap:12px;padding:14px 24px;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;align-items:center;flex-wrap:nowrap;
+  background:rgba(10,20,38,.6);
+}
+.stat-card{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 18px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  min-width:148px;flex-shrink:0;
+  cursor:pointer;transition:all .16s;
+}
+.stat-card:hover{border-color:var(--border);background:rgba(255,255,255,.06);}
+.stat-card.stat-active{border-color:var(--acc);box-shadow:0 0 14px var(--acc3);}
+.stat-info{display:flex;flex-direction:column;}
+.stat-number{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;color:var(--acc);}
+.stat-label{font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:1.2px;margin-top:2px;}
+
+/* contrast slider */
+.contrast-row{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.contrast-row input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:99px;background:rgba(255,255,255,.15);outline:none;cursor:pointer;}
+.contrast-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.contrast-row span{font-family:'DM Mono',monospace;font-size:10px;color:var(--mid);min-width:32px;text-align:right;}
+
+/* inline title edit */
+.card-title-input{
+  font-size:var(--task-font-size);font-weight:500;color:var(--offwhite);line-height:1.4;
+  background:rgba(255,255,255,.06);border:1.5px solid var(--acc);border-radius:5px;
+  padding:2px 7px;width:100%;font-family:'DM Sans',sans-serif;outline:none;
+}
+
+/* card clickable */
+.card-row{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;cursor:pointer;
+}
+.task-card:hover .card-row{background:rgba(255,255,255,.02);}
+
+/* ── SETTINGS PANEL ─────────────────────────────────────────── */
+.settings-drawer{display:none;position:fixed;top:64px;right:0;bottom:0;width:50vw;min-width:320px;background:var(--bg3);border-left:1px solid var(--border);z-index:400;overflow-y:auto;box-shadow:-6px 0 28px rgba(0,0,0,.4);}
+.settings-drawer.open{display:block;}
+.sd-hdr{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sd-hdr h3{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1.5px;}
+.sd-close{background:none;border:none;color:var(--mid);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;transition:all .14s;}
+.sd-close:hover{color:#fff;background:rgba(255,255,255,.08);}
+.sd-section{padding:16px 20px;border-bottom:1px solid var(--border);}
+.sd-section h4{font-size:10px;color:var(--mid);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:600;}
+.pal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pal-btn{padding:7px 10px;border-radius:7px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;text-align:center;transition:all .15s;background:rgba(255,255,255,.05);color:var(--offwhite);}
+.pal-btn:hover{border-color:rgba(255,255,255,.2);}
+.pal-btn.active{border-color:#fff;}
+
+/* owner selector row */
+.owner-strip{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 24px;
+  border-bottom:1px solid var(--border);
+  background:rgba(10,20,38,.4);
+  flex-wrap:wrap;
+}
+.owner-strip label{font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:1.2px;white-space:nowrap;}
+.owner-pills{display:flex;gap:5px;flex-wrap:wrap;}
+.owner-pill{
+  padding:5px 14px;border-radius:5px;font-size:12px;font-weight:500;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  color:var(--mid);cursor:pointer;transition:all .15s;
+}
+.owner-pill:hover{border-color:var(--acc2);color:var(--offwhite);}
+.owner-pill.active{background:var(--acc3);border-color:var(--acc);color:var(--acc2);}
+
+/* ── PHASE TABS ─────────────────────────────────────────────── */
+.tab-bar{
+  display:flex;align-items:flex-end;gap:4px;
+  padding:12px 24px 0;
+  overflow-x:auto;scrollbar-width:none;
+  background:rgba(10,20,38,.4);
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab{
+  padding:10px 18px;
+  border-radius:6px 6px 0 0;
+  border:1px solid transparent;border-bottom:none;
+  background:transparent;color:var(--mid);
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .16s;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;
+}
+.tab:hover{color:var(--offwhite);background:rgba(255,255,255,.04);}
+.tab.active{color:var(--acc);background:var(--bg2);border-color:var(--border);}
+.tab .cnt{background:var(--acc3);color:var(--acc);font-size:10px;padding:1px 6px;border-radius:99px;font-family:'DM Mono',monospace;}
+.tab.active .cnt{background:var(--acc-b);}
+
+/* ── MAIN AREA ──────────────────────────────────────────────── */
+.main-wrap{background:var(--bg2);border-top:1px solid var(--border);min-height:calc(100vh - 200px);}
+main{padding:16px 24px;}
+
+/* ── TOOLBAR ────────────────────────────────────────────────── */
+.toolbar{display:flex;gap:7px;align-items:center;margin-bottom:0;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.srch{position:relative;flex:1;min-width:180px;}
+.srch input{
+  width:100%;padding:8px 11px 8px 32px;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:7px;color:var(--offwhite);font-family:'DM Sans',sans-serif;font-size:12.5px;outline:none;transition:border-color .16s;
+}
+.srch input:focus{border-color:var(--acc);}
+.srch input::placeholder{color:var(--mid);}
+.srch .si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--mid);pointer-events:none;font-size:13px;}
+
+/* quick-add row */
+.quick-add-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px 10px 12px;
+  border-bottom:1px solid var(--border);
+  cursor:text;
+  transition:background .12s;
+}
+.quick-add-row:hover{background:rgba(255,255,255,.02);}
+.qa-spacer{width:18px;flex-shrink:0;}
+.qa-circle{
+  width:22px;height:22px;border-radius:50%;
+  border:2px dashed rgba(255,255,255,.18);
+  background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:rgba(255,255,255,.2);flex-shrink:0;
+  transition:all .14s;
+}
+.quick-add-row:hover .qa-circle{border-color:var(--acc);color:var(--acc);}
+.qa-input{
+  flex:1;border:none;background:transparent;
+  color:var(--offwhite);font-family:'DM Sans',sans-serif;font-size:var(--task-font-size);
+  outline:none;caret-color:var(--acc);
+}
+.qa-input::placeholder{color:rgba(255,255,255,.2);}
+.qa-hint{font-size:10.5px;color:rgba(255,255,255,.18);font-family:'DM Mono',monospace;white-space:nowrap;}
+.filter-btn{
+  padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;
+  background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  color:var(--mid);cursor:pointer;transition:all .15s;
+}
+.filter-btn:hover{border-color:var(--acc2);color:var(--offwhite);}
+.filter-btn.active{border-color:var(--acc);color:var(--acc);background:var(--acc3);}
+.add-task-strip{margin-left:auto;}
+
+/* ── TASK LIST — flat rows ───────────────────────────────────── */
+.task-list{display:flex;flex-direction:column;}
+
+.task-card{
+  background:transparent;
+  border:none;
+  transition:background .12s;
+  overflow:hidden;
+  position:relative;
+}
+.task-card:first-child{border-top:none;}
+.task-card:hover{background:rgba(255,255,255,.03);}
+.task-card.done-card{opacity:.45;}
+.task-card.subtask-card{
+  margin-left:0;
+  border-left:none;
+  background:rgba(0,0,0,.08);
+}
+.task-card.subtask-card .card-row{padding-left:52px;}
+
+/* card row — expand on left */
+.card-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 16px 11px 12px;cursor:pointer;
+}
+.task-card:hover .card-row{background:transparent;}
+
+/* Expand arrow — LEFT side, before status circle */
+.expand-btn{
+  width:18px;height:18px;border-radius:3px;border:none;
+  background:transparent;color:rgba(255,255,255,.25);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;transition:all .14s;flex-shrink:0;
+}
+.expand-btn:hover{color:var(--offwhite);}
+.expand-btn.open{transform:rotate(90deg);color:var(--acc);}
+.expand-btn-spacer{width:18px;flex-shrink:0;} /* placeholder when no notes */
+
+/* Status circle — DARK (bg3 fill) */
+.status-circle{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.22);
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;flex-shrink:0;cursor:pointer;transition:all .15s;
+}
+.status-circle:hover{transform:scale(1.1);}
+.sc-none{border-color:var(--s-none);background:var(--bg3);}
+.sc-prog{border-color:var(--s-prog);background:rgba(232,164,48,.18);color:var(--s-prog);}
+.sc-hold{border-color:var(--s-hold);background:rgba(155,111,212,.15);color:var(--s-hold);}
+.sc-done{border-color:var(--s-done);background:rgba(60,184,114,.2);color:var(--s-done);}
+
+.card-body{flex:1;min-width:0;}
+.card-title{font-size:var(--task-font-size);font-weight:500;color:var(--offwhite);line-height:1.4;margin-bottom:4px;}
+.card-title.done-text{text-decoration:line-through;color:rgba(255,255,255,.28);}
+.card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+
+/* priority pill */
+.pri-badge{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:600;}
+.pri-high{background:rgba(224,82,82,.15);color:#F08080;border:1px solid rgba(224,82,82,.2);}
+.pri-med{background:rgba(232,164,48,.15);color:#F0C060;border:1px solid rgba(232,164,48,.2);}
+.pri-low{background:rgba(91,155,213,.15);color:#88B4D8;border:1px solid rgba(91,155,213,.2);}
+.pri-none{color:var(--mid);font-size:10.5px;}
+.pri-dot-sm{display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.pd-high{background:#E05252;}.pd-med{background:#E8A430;}.pd-low{background:#5B9BD5;}
+
+/* due date */
+.due-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--mid);display:inline-flex;align-items:center;gap:3px;}
+.due-badge.overdue{color:#F08080;}
+
+/* hashtags */
+.tag-chip{display:inline-block;padding:0 2px;border-radius:3px;font-size:10.5px;font-family:'DM Mono',monospace;color:#64748B;background:transparent;border:none;white-space:nowrap;cursor:pointer;transition:color .13s;}
+.tag-chip:hover{color:#94A3B8;}
+
+/* card right area */
+.card-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.owner-tags{display:flex;gap:3px;flex-wrap:nowrap;}
+.owner-chip{
+  font-size:10.5px;padding:2px 7px;border-radius:4px;
+  background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);
+  border:1px solid rgba(255,255,255,.07);white-space:nowrap;
+}
+
+/* status pill small */
+.st-pill{display:inline-block;padding:2px 7px;border-radius:99px;font-size:9.5px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:.5px;}
+.stp-none{background:rgba(74,140,247,.15);color:#7EB8FA;}
+.stp-prog{background:rgba(232,164,48,.15);color:#F0C060;}
+.stp-hold{background:rgba(155,111,212,.15);color:#C4A0E8;}
+.stp-done{background:rgba(60,184,114,.15);color:#6FD89A;}
+
+/* card actions */
+.card-actions{display:flex;gap:2px;opacity:0;transition:opacity .15s;}
+.task-card:hover .card-actions{opacity:1;}
+.ca-btn{
+  width:27px;height:27px;border-radius:4px;border:none;
+  background:transparent;color:var(--mid);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;transition:all .14s;
+}
+.ca-btn:hover{background:var(--acc3);color:var(--acc);}
+.ca-btn.del:hover{background:rgba(220,70,70,.12);color:#D06060;}
+
+/* notes panel inside card — indent to align with card-body */
+.card-notes-panel{
+  padding:0 16px 11px 62px;
+  animation:slideDown 150ms ease;
+  display:none;
+}
+.card-notes-panel.show{display:block;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.notes-text{
+  font-size:12px;color:rgba(255,255,255,.6);line-height:1.6;
+  padding:8px 12px;background:rgba(0,0,0,.15);
+  border-radius:var(--radius-sm);border:1px solid var(--border);
+  white-space:pre-wrap;word-break:break-word;
+}
+
+/* empty state */
+.empty-state{
+  text-align:center;padding:60px 20px;color:var(--mid);
+}
+.empty-state .ei{font-size:40px;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* ── STICKYS PAGE ───────────────────────────────────────────── */
+.stickys-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;
+  margin-top:4px;
+}
+.sticky-card{
+  border-radius:var(--radius);padding:14px 16px;
+  border:1px solid rgba(255,255,255,.08);
+  min-height:100px;transition:all .16s;position:relative;
+}
+.sticky-card:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.sticky-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.sticky-title{font-size:13px;font-weight:600;color:rgba(0,0,0,.75);line-height:1.3;}
+.sticky-pin{font-size:12px;opacity:.5;}
+.sticky-body{font-size:12px;color:rgba(0,0,0,.6);line-height:1.6;}
+.sticky-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;}
+.sticky-tag{font-size:9.5px;padding:1px 6px;border-radius:99px;background:rgba(0,0,0,.12);color:rgba(0,0,0,.55);}
+.sticky-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.sticky-date{font-size:10px;color:rgba(0,0,0,.4);font-family:'DM Mono',monospace;}
+.sticky-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s;}
+.sticky-card:hover .sticky-actions{opacity:1;}
+.sticky-act-btn{background:rgba(0,0,0,.12);border:none;border-radius:4px;width:24px;height:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .14s;}
+.sticky-act-btn:hover{background:rgba(0,0,0,.2);}
+.sticky-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+
+/* ── MODALS ─────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg3);border:1px solid var(--border);border-radius:12px;width:540px;max-width:95vw;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border);}
+.mhdr h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:#fff;}
+.close-m{background:none;border:none;color:var(--mid);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:4px;transition:all .14s;}
+.close-m:hover{color:#fff;background:rgba(255,255,255,.08);}
+.mbody{padding:18px 22px;display:flex;flex-direction:column;gap:12px;}
+.mfoot{padding:14px 22px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:10.5px;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;font-weight:500;}
+.field input,.field select,.field textarea{
+  padding:8px 11px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:7px;
+  color:var(--offwhite);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .16s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);}
+.field select option{background:#0F1E36;}
+.field textarea{resize:vertical;line-height:1.55;}
+
+/* who modal */
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+
+/* ── TOAST ──────────────────────────────────────────────────── */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:600;display:flex;flex-direction:column;gap:7px;}
+.toast{
+  padding:11px 18px;background:var(--bg3);
+  border:1px solid var(--border);border-left:3px solid var(--acc);
+  border-radius:7px;font-size:12.5px;color:var(--offwhite);
+  box-shadow:0 4px 18px rgba(0,0,0,.4);
+  animation:slideIn 250ms ease;
+}
+@keyframes slideIn{from{transform:translateX(50px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* loading */
+.loading-overlay{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:14px;}
+.loading-spinner{width:36px;height:36px;border:3px solid rgba(201,168,76,.2);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-size:13px;color:var(--mid);font-family:'DM Mono',monospace;}
+
+/* note color opts */
+.note-color-opts{display:flex;gap:7px;flex-wrap:wrap;}
+.note-color-opt{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .14s;}
+.note-color-opt:hover,.note-color-opt.selected{border-color:#fff;transform:scale(1.1);}
+
+/* multi-owner select */
+.owner-multi{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;min-height:38px;cursor:pointer;}
+.owner-multi:focus-within{border-color:var(--acc);}
+.ow-chip{padding:2px 8px;border-radius:99px;background:var(--acc3);color:var(--acc2);font-size:11px;display:flex;align-items:center;gap:4px;}
+.ow-chip button{background:none;border:none;color:var(--acc);cursor:pointer;font-size:13px;line-height:1;padding:0;}
+.owner-drop{display:none;position:fixed;z-index:2000;background:#152134;border:1.5px solid var(--acc);border-radius:8px;padding:7px;max-height:200px;overflow-y:auto;min-width:200px;box-shadow:0 8px 28px rgba(0,0,0,.5);}
+.ow-opt{padding:6px 10px;border-radius:5px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:7px;transition:all .12s;}
+.ow-opt:hover{background:var(--acc3);}
+.ow-opt.sel{color:var(--acc);}
+
+/* Status cycle popover */
+.status-pop{position:fixed;z-index:800;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:7px;box-shadow:0 10px 32px rgba(0,0,0,.55);display:none;flex-direction:column;gap:3px;}
+.status-pop.open{display:flex;}
+.sp-opt{padding:6px 13px;border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;transition:all .12s;}
+.sp-opt:hover{background:rgba(255,255,255,.05);}
+
+@media(max-width:640px){
+  header{padding:0 14px;min-height:56px;}
+  .logo-name{font-size:18px;}
+  .stats-strip{padding:10px 14px;gap:8px;}
+  .stat-card{min-width:120px;padding:9px 12px;}
+  .stat-number{font-size:22px;}
+  .owner-strip,.tab-bar{padding-left:14px;padding-right:14px;}
+  main{padding:12px 14px;}
+  .task-card{border-radius:8px;}
+  .card-actions{opacity:1;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-txt">Loading Homefront Watch…</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img class="logo-img" id="logoImg" src="" alt="Logo">
+    <div>
+      <div class="logo-name" id="appTitle">Homefront Watch</div>
+      <div class="logo-sub">Simple View &nbsp;·&nbsp; v1.5.3</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div style="display:flex;align-items:center;gap:5px">
+      <div class="sync-dot offline" id="syncDot"></div>
+      <span class="sync-label" id="syncLabel">offline</span>
+    </div>
+    <div class="sep"></div>
+    <button class="btn btn-advanced btn-sm" onclick="window.open('https://wsadams.github.io/Shauns-Dashboard/','_blank')">⚙ Advanced View</button>
+    <div class="sep"></div>
+    <button class="btn btn-ghost btn-sm" onclick="toggleSettings()">Settings</button>
+    <div class="sep"></div>
+    <button class="btn btn-ghost btn-sm" id="userChip" onclick="openWhoModal()">👤 —</button>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-strip" id="statsStrip">
+  <div class="stat-card stat-active" data-filter="" id="statTotal" onclick="setStatFilter(this,'')">
+    <div class="stat-info">
+      <div class="stat-number" id="stTotal">0</div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+  </div>
+  <div class="stat-card" data-filter="In Progress" id="statProg" onclick="setStatFilter(this,'In Progress')">
+    <div class="stat-info">
+      <div class="stat-number" id="stProg">0</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+  </div>
+  <div class="stat-card" data-filter="On Hold" id="statHold" onclick="setStatFilter(this,'On Hold')">
+    <div class="stat-info">
+      <div class="stat-number" id="stHold">0</div>
+      <div class="stat-label">On Hold</div>
+    </div>
+  </div>
+  <div class="stat-card" data-filter="Complete" id="statDone" onclick="setStatFilter(this,'Complete')">
+    <div class="stat-info">
+      <div class="stat-number" id="stDone">0</div>
+      <div class="stat-label">Complete</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- OWNER FILTER -->
+<div class="owner-strip">
+  <label>Viewing:</label>
+  <div class="owner-pills" id="ownerPills">
+    <button class="owner-pill active" data-owner="__all__" onclick="setOwner(this,'__all__')">All</button>
+  </div>
+</div>
+
+<!-- PHASE TABS -->
+<div class="tab-bar" id="tabBar"></div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <main id="mainArea">
+    <!-- PLANNER PAGE -->
+    <div id="plannerPage">
+      <div class="toolbar">
+        <div class="srch">
+          <span class="si">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search tasks…" oninput="renderCards()">
+        </div>
+        <!-- Status filters -->
+        <button class="filter-btn active" data-status="" onclick="setStatusFilter(this,'')">All</button>
+        <button class="filter-btn" data-status="Not Started" onclick="setStatusFilter(this,'Not Started')">Not Started</button>
+        <button class="filter-btn" data-status="In Progress" onclick="setStatusFilter(this,'In Progress')">In Progress</button>
+        <button class="filter-btn" data-status="On Hold" onclick="setStatusFilter(this,'On Hold')">On Hold</button>
+        <button class="filter-btn" data-status="Complete" onclick="setStatusFilter(this,'Complete')">Complete</button>
+        <div class="add-task-strip">
+          <button class="btn btn-gold btn-sm" onclick="openTaskModal()">+ Add Task</button>
+        </div>
+      </div>
+      <!-- Quick-add inline row -->
+      <div class="quick-add-row" onclick="document.getElementById('qaInput').focus()">
+        <span class="qa-spacer"></span>
+        <div class="qa-circle">+</div>
+        <input class="qa-input" id="qaInput" placeholder="Add a new task… (press Enter)" onkeydown="quickAddKeydown(event)" onfocus="this.placeholder=''" onblur="this.placeholder='Add a new task… (press Enter)'">
+        <span class="qa-hint" id="qaHint">Enter</span>
+      </div>
+      <div class="task-list" id="taskList"></div>
+    </div>
+
+    <!-- STICKYS PAGE -->
+    <div id="stickysPage" style="display:none">
+      <div class="sticky-header-row">
+        <div style="font-size:12px;color:var(--mid)">Your quick notes &amp; stickys</div>
+        <button class="btn btn-gold btn-sm" onclick="openNoteModal()">+ Add Sticky</button>
+      </div>
+      <div class="stickys-grid" id="stickysGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- STATUS POPOVER -->
+<div class="status-pop" id="statusPop">
+  <div class="sp-opt" onclick="applyStatus('Not Started')"><span style="color:var(--s-none)">●</span> Not Started</div>
+  <div class="sp-opt" onclick="applyStatus('In Progress')"><span style="color:var(--s-prog)">●</span> In Progress</div>
+  <div class="sp-opt" onclick="applyStatus('On Hold')"><span style="color:var(--s-hold)">●</span> On Hold</div>
+  <div class="sp-opt" onclick="applyStatus('Complete')"><span style="color:var(--s-done)">✓</span> Complete</div>
+</div>
+
+<!-- ADD / EDIT TASK MODAL -->
+<div class="overlay" id="taskModal">
+  <div class="modal">
+    <div class="mhdr"><h2 id="modalTitle">Add Task</h2><button class="close-m" onclick="closeOverlay('taskModal')">×</button></div>
+    <div class="mbody">
+      <input type="hidden" id="editId">
+      <div class="field"><label>Task Name</label><input type="text" id="fTask" placeholder="Describe the task…"></div>
+      <div class="field"><label>Notes</label><textarea id="fNotes" rows="2" placeholder="Status notes, context…"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="field"><label>Phase</label><select id="fPhase"></select></div>
+        <div class="field"><label>Priority</label>
+          <select id="fPriority">
+            <option value="">— None —</option><option>High</option><option>Medium</option><option>Low</option>
+          </select>
+        </div>
+        <div class="field"><label>Status</label>
+          <select id="fStatus">
+            <option>Not Started</option><option>In Progress</option><option>On Hold</option><option>Complete</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field">
+          <label>Assignee(s)</label>
+          <div class="owner-multi" id="fOwnerWrap" onclick="toggleOwnerDrop()"></div>
+          <div class="owner-drop" id="fOwnerDrop"></div>
+        </div>
+        <div class="field"><label>Tags (#hashtags)</label><input type="text" id="fTags" placeholder="#brand #social…"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field"><label>Start Date</label><input type="date" id="fStart"></div>
+        <div class="field"><label>Due Date</label><input type="date" id="fDue"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOverlay('taskModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT STICKY MODAL -->
+<div class="overlay" id="noteModal">
+  <div class="modal" style="width:500px">
+    <div class="mhdr"><h2 id="noteModalTitle">Add Sticky</h2><button class="close-m" onclick="closeOverlay('noteModal')">×</button></div>
+    <div class="mbody">
+      <input type="hidden" id="noteEditId">
+      <div class="field"><label>Title</label><input type="text" id="nTitle" placeholder="Note title…"></div>
+      <div class="field"><label>Color</label><div class="note-color-opts" id="noteColorOpts"></div></div>
+      <div class="field">
+        <label>Body</label>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;overflow:hidden" id="nBodyWrap">
+          <div style="display:flex;gap:4px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)">
+            <button type="button" class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nCmd('bold')"><b>B</b></button>
+            <button type="button" class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nCmd('italic')"><i>I</i></button>
+            <button type="button" class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nCmd('underline')"><u>U</u></button>
+            <button type="button" class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="nCmd('insertUnorderedList')">• List</button>
+          </div>
+          <div id="nBody" contenteditable="true"
+            style="min-height:90px;padding:10px;font-size:13px;outline:none;line-height:1.6;"
+            onfocus="document.getElementById('nBodyWrap').style.borderColor='var(--acc)'"
+            onblur="document.getElementById('nBodyWrap').style.borderColor='rgba(255,255,255,.1)'"></div>
+        </div>
+      </div>
+      <div class="field"><label>Tags</label><input type="text" id="nTags" placeholder="#meeting #brand…"></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer">
+        <input type="checkbox" id="nPinned" style="accent-color:var(--acc)"> Pin this sticky
+      </label>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" onclick="closeOverlay('noteModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveNote()">Save Sticky</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHO ARE YOU MODAL -->
+<div class="overlay" id="whoModal" style="z-index:600">
+  <div class="modal" style="width:400px;text-align:center">
+    <div class="mhdr" style="justify-content:center;border-bottom:none;padding-bottom:6px">
+      <h2>👋 Who Are You?</h2>
+    </div>
+    <div class="mbody" style="align-items:center">
+      <p style="font-size:13px;color:var(--mid);line-height:1.6">Select your name so your tasks show up first. Saved to this browser.</p>
+      <div class="who-grid" id="whoGrid" style="margin-top:4px;width:100%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS DRAWER -->
+<div class="settings-drawer" id="settingsDrawer">
+  <div class="sd-hdr">
+    <h3>⚙ Settings</h3>
+    <button class="sd-close" onclick="toggleSettings()">×</button>
+  </div>
+  <div class="sd-section">
+    <h4>Color Palette</h4>
+    <div class="pal-grid" id="simplePalGrid"></div>
+    <p style="font-size:11px;color:var(--mid);margin-top:8px">Saved locally. Does not affect the Advanced View.</p>
+  </div>
+  <div class="sd-section">
+    <h4>Task Title Size</h4>
+    <div class="contrast-row">
+      <input type="range" id="fontSizeSlider" min="11" max="20" value="14" oninput="applyTaskFontSize(this.value)">
+      <span id="fontSizeVal">14px</span>
+    </div>
+    <p style="font-size:11px;color:var(--mid);margin-top:8px">Adjusts the font size of task titles in the list.</p>
+  </div>
+    <div class="contrast-row">
+      <input type="range" id="contrastSlider" min="0" max="100" value="50" oninput="applyContrast(this.value)">
+      <span id="contrastVal">50</span>
+    </div>
+    <p style="font-size:11px;color:var(--mid);margin-top:8px">Slide left for darker, right for lighter. Saved locally.</p>
+  </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;">
+      <div>
+        <div style="font-size:12.5px;font-weight:500">Supabase Sync</div>
+        <div style="font-size:10.5px;color:var(--mid);margin-top:2px">Turn off when testing locally</div>
+      </div>
+      <label style="position:relative;width:38px;height:20px;cursor:pointer;display:block">
+        <input type="checkbox" id="sbToggle" checked onchange="toggleSb(this.checked)" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;z-index:1">
+        <div id="sbTrack" style="position:absolute;inset:0;background:var(--acc);border-radius:99px;transition:background .2s"></div>
+        <div id="sbThumb" style="position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;transform:translateX(18px)"></div>
+      </label>
+    </div>
+    <div style="margin-top:10px">
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="manualRefresh()">↻ Refresh Data Now</button>
+    </div>
+  </div>
+  <div class="sd-section">
+    <h4>About</h4>
+    <div style="font-size:12px;color:var(--mid);line-height:1.7">
+      <div>Simple View <strong style="color:var(--acc2)">v1.5.3</strong></div>
+      <div>Homefront Watch</div>
+      <div>Intelligent Surveillance Corp</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  SUPABASE CONFIG — same as homefront_watch_v5
+// ══════════════════════════════════════════════════════════════
+const SB_URL = 'https://nhqytnaevtynbkgypidb.supabase.co';
+const SB_KEY = 'sb_publishable_Tj891C3Fc3E-mh0N-X0D7g_UQFfzFNN';
+
+// ── STATE ─────────────────────────────────────────────────────
+let tasks = [], nextId = 1;
+let phases = ['Phase 1','Phase 2','Phase 3','Backlog'];
+let people = ['Dad','Shaun','Tia','Jada','Jeremiah','Mom'];
+let allTags = [];
+let notes = [];
+let appTitle = 'Homefront Watch';
+let logoUrl = '';
+let currentUser = localStorage.getItem('hw_user') || '';
+let supabaseEnabled = true;
+
+// VIEW STATE
+let activeTab = '__planner__'; // phase name or '__stickys__'
+let activeOwner = '__all__';
+let activeToolbarStatus = ''; // toolbar status filter buttons
+let activeStatFilter = ''; // KPI card filter
+let expandedCards = new Set();
+let selectedOwners = []; // for modal
+let selectedNoteColor = '#FFF0C0';
+let statusPopTarget = null;
+let inlineEditId = null; // currently inline-editing task id
+
+const ST_CLS = {'Not Started':'sc-none','In Progress':'sc-prog','On Hold':'sc-hold','Complete':'sc-done'};
+const ST_PILL = {'Not Started':'stp-none','In Progress':'stp-prog','On Hold':'stp-hold','Complete':'stp-done'};
+const PR_CLS = {'High':'pri-high','Medium':'pri-med','Low':'pri-low','':`pri-none`};
+const NOTE_COLORS = ['#FFF0C0','#F9E4B7','#FFD6B0','#F7C5C5','#FFB3BA','#E8D0F5','#D4BFFF','#C8D8F8','#B5E8D0','#C8F0D8','#D8F5C0','#E8F5A0'];
+
+// ── SUPABASE HELPERS ──────────────────────────────────────────
+function sbFetch(path, options={}){
+  const url = SB_URL + '/rest/v1/' + path;
+  const headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': options.prefer || 'return=representation',
+    ...options.headers
+  };
+  return fetch(url, { ...options, headers });
+}
+
+function setSyncDot(state){
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  if(!dot) return;
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = state === 'saving' ? 'saving…' : state === 'error' ? 'error' : state === 'offline' ? 'offline' : 'synced';
+}
+
+// ── LOAD ──────────────────────────────────────────────────────
+async function loadFromSupabase(){
+  if(!supabaseEnabled){ setSyncDot('offline'); return; }
+  setSyncDot('saving');
+  try {
+    // Settings
+    const sr = await sbFetch('settings?id=eq.1');
+    if(sr.ok){
+      const sArr = await sr.json();
+      if(sArr.length){
+        const s = sArr[0];
+        phases = s.phases || phases;
+        people = s.people || people;
+        allTags = s.tags || [];
+        appTitle = s.app_title || appTitle;
+        logoUrl = s.logo_url || '';
+        // NOTE: palette is NOT pulled from Supabase — Simple View has its own local palette
+      }
+    }
+    // Tasks
+    const tr = await sbFetch('tasks?order=order_val.asc');
+    if(tr.ok){
+      const raw = await tr.json();
+      if(raw.length){
+        tasks = raw.map(r=>({
+          id: r.task_id,
+          _sbId: r.id,
+          parentId: r.parent_id,
+          phase: r.phase, category: r.category||'', task: r.task,
+          owner: Array.isArray(r.owner)?r.owner:(r.owner?[r.owner]:[]),
+          status: r.status||'Not Started', priority: r.priority||'',
+          done: !!r.done, pct: r.pct||0,
+          startDate: r.start_date||'', dueDate: r.due_date||'',
+          time: r.time_est||'', notes: r.notes||'',
+          blocker: r.blocker||'', dependsOn: r.depends_on||null,
+          order: r.order_val||0,
+          tags: Array.isArray(r.tags)?r.tags:[]
+        }));
+        nextId = Math.max(...tasks.map(t=>t.id), 0)+1;
+        tasks.forEach(t=>(t.tags||[]).forEach(tag=>{if(!allTags.includes(tag))allTags.push(tag);}));
+      }
+    }
+    // Notes
+    const nr = await sbFetch('notes?order=pinned.desc,updated_at.desc');
+    if(nr.ok){ notes = await nr.json(); }
+    setSyncDot('synced');
+  } catch(e){
+    console.warn('Supabase load failed:', e);
+    setSyncDot('offline');
+  }
+}
+
+async function saveTaskToSb(t){
+  if(!supabaseEnabled) return;
+  setSyncDot('saving');
+  const row = {
+    task_id: t.id, parent_id: t.parentId||null,
+    phase: t.phase, category: t.category||'', task: t.task,
+    owner: t.owner||[], status: t.status, priority: t.priority||'',
+    done: t.done, pct: t.pct||0,
+    start_date: t.startDate||'', due_date: t.dueDate||'',
+    time_est: t.time||'', notes: t.notes||'',
+    blocker: t.blocker||'', depends_on: t.dependsOn||null,
+    order_val: t.order||0, tags: t.tags||[]
+  };
+  try {
+    if(t._sbId){
+      await sbFetch(`tasks?id=eq.${t._sbId}`, {method:'PATCH', body:JSON.stringify(row)});
+    } else {
+      const r = await sbFetch('tasks', {method:'POST', body:JSON.stringify(row), prefer:'return=representation'});
+      if(r.ok){ const d=await r.json(); if(d[0]) t._sbId=d[0].id; }
+    }
+    setSyncDot('synced');
+    toast('✓ Saved');
+  } catch(e){ setSyncDot('error'); console.warn(e); }
+}
+
+async function deleteTaskFromSb(t){
+  if(!t._sbId) return;
+  try { await sbFetch(`tasks?id=eq.${t._sbId}`, {method:'DELETE'}); } catch(e){ console.warn(e); }
+}
+
+async function saveNoteToSb(n){
+  if(!supabaseEnabled) return;
+  setSyncDot('saving');
+  const row = { title:n.title||'', body:n.body||'', color:n.color||'#FFF0C0', tags:n.tags||[], pinned:!!n.pinned, updated_at:new Date().toISOString() };
+  try {
+    if(n.id && String(n.id).length > 5){
+      await sbFetch(`notes?id=eq.${n.id}`, {method:'PATCH', body:JSON.stringify(row)});
+    } else {
+      const r = await sbFetch('notes', {method:'POST', body:JSON.stringify(row), prefer:'return=representation'});
+      if(r.ok){ const d=await r.json(); if(d[0]) n.id=d[0].id; }
+    }
+    setSyncDot('synced'); toast('✓ Sticky saved');
+  } catch(e){ setSyncDot('error'); console.warn(e); }
+}
+
+async function deleteNoteFromSb(id){
+  if(!supabaseEnabled) return;
+  try { await sbFetch(`notes?id=eq.${id}`, {method:'DELETE'}); } catch(e){ console.warn(e); }
+}
+
+// ── ESC HELPER ────────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg){
+  const el = document.createElement('div'); el.className='toast'; el.textContent=msg;
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(), 300); }, 2400);
+}
+
+// ── WHO ARE YOU ───────────────────────────────────────────────
+function openWhoModal(){
+  const g = document.getElementById('whoGrid');
+  g.innerHTML = people.map(p=>`
+    <button class="btn btn-outline" style="justify-content:center;padding:12px;font-size:14px"
+      onclick="selectUser('${esc(p)}')">${esc(p)}</button>`).join('');
+  document.getElementById('whoModal').classList.add('open');
+}
+function selectUser(name){
+  currentUser = name;
+  localStorage.setItem('hw_user', name);
+  document.getElementById('whoModal').classList.remove('open');
+  document.getElementById('userChip').textContent = '👤 ' + name;
+  // default owner filter to self
+  setOwnerByName(name);
+  toast(`✓ Signed in as ${name}`);
+}
+function setOwnerByName(name){
+  activeOwner = name;
+  document.querySelectorAll('.owner-pill').forEach(p=>{
+    p.classList.toggle('active', p.dataset.owner===name);
+  });
+  renderAll();
+}
+
+// ── BUILD UI ──────────────────────────────────────────────────
+function buildOwnerPills(){
+  const wrap = document.getElementById('ownerPills');
+  const allBtn = `<button class="owner-pill${activeOwner==='__all__'?' active':''}" data-owner="__all__" onclick="setOwner(this,'__all__')">All</button>`;
+  const pills = people.map(p=>`<button class="owner-pill${activeOwner===p?' active':''}" data-owner="${esc(p)}" onclick="setOwner(this,'${esc(p)}')">${esc(p)}</button>`).join('');
+  wrap.innerHTML = allBtn + pills;
+}
+
+function setOwner(btn, owner){
+  activeOwner = owner;
+  document.querySelectorAll('.owner-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+function buildTabs(){
+  const bar = document.getElementById('tabBar');
+  // phases
+  const phaseTabs = phases.map(ph=>{
+    const cnt = getFilteredTasksForPhase(ph).length;
+    const active = activeTab===ph;
+    return `<button class="tab${active?' active':''}" onclick="setTab('${esc(ph)}')">${esc(ph)}<span class="cnt">${cnt}</span></button>`;
+  }).join('');
+  // stickys tab
+  const stActive = activeTab==='__stickys__';
+  bar.innerHTML = phaseTabs + `<button class="tab${stActive?' active':''}" onclick="setTab('__stickys__')">📌 Stickys</button>`;
+}
+
+function setTab(ph){
+  activeTab = ph;
+  buildTabs();
+  if(ph==='__stickys__'){
+    document.getElementById('plannerPage').style.display='none';
+    document.getElementById('stickysPage').style.display='block';
+    renderStickys();
+  } else {
+    document.getElementById('plannerPage').style.display='block';
+    document.getElementById('stickysPage').style.display='none';
+    renderCards();
+  }
+}
+
+// Returns tasks for a phase subject to owner filter (for tab counts)
+function getFilteredTasksForPhase(ph){
+  return tasks.filter(t=>{
+    if(t.parentId) return false; // don't count subtasks separately
+    if(t.phase!==ph) return false;
+    if(activeOwner!=='__all__' && !(t.owner||[]).includes(activeOwner)) return false;
+    return true;
+  });
+}
+
+// ── STATS ─────────────────────────────────────────────────────
+function updateStats(){
+  const base = tasks.filter(t=>{
+    if(t.parentId) return false;
+    if(activeOwner!=='__all__' && !(t.owner||[]).includes(activeOwner)) return false;
+    return true;
+  });
+  const total = base.length;
+  const prog = base.filter(t=>t.status==='In Progress').length;
+  const hold = base.filter(t=>t.status==='On Hold').length;
+  const done = base.filter(t=>t.status==='Complete').length;
+  document.getElementById('stTotal').textContent = total;
+  document.getElementById('stProg').textContent = prog;
+  document.getElementById('stHold').textContent = hold;
+  document.getElementById('stDone').textContent = done;
+}
+
+// ── SETTINGS / PALETTE ───────────────────────────────────────
+const PALETTES_SIMPLE = [
+  {id:'gold',   color:'#C9A84C', label:'Gold'},
+  {id:'steel',  color:'#4A8CF7', label:'Steel'},
+  {id:'emerald',color:'#3DAD7A', label:'Emerald'},
+  {id:'crimson',color:'#D4506A', label:'Crimson'},
+  {id:'violet', color:'#8B5CF6', label:'Violet'},
+  {id:'slate',  color:'#64748B', label:'Slate'},
+];
+let simplePalette = localStorage.getItem('shw_palette') || 'gold';
+
+function applySimplePalette(id){
+  simplePalette = id;
+  localStorage.setItem('shw_palette', id);
+  document.documentElement.dataset.palette = id;
+  buildPalGrid();
+}
+
+// ── TASK FONT SIZE ────────────────────────────────────────────
+let taskFontSize = parseInt(localStorage.getItem('shw_font_size')||'14', 10);
+
+function applyTaskFontSize(val){
+  taskFontSize = parseInt(val, 10);
+  localStorage.setItem('shw_font_size', val);
+  document.documentElement.style.setProperty('--task-font-size', val+'px');
+  const v = document.getElementById('fontSizeVal');
+  if(v) v.textContent = val+'px';
+}
+let simpleContrast = parseInt(localStorage.getItem('shw_contrast')||'50', 10);
+
+function applyContrast(val){
+  simpleContrast = parseInt(val, 10);
+  localStorage.setItem('shw_contrast', val);
+  const v = document.getElementById('contrastVal');
+  if(v) v.textContent = val;
+  // Map 0–100 → darken/lighten the base navy colours
+  // 50 = default (no change). Below 50 = darker, above 50 = lighter.
+  const factor = (simpleContrast - 50) / 50; // -1 to +1
+  // Interpolate bg brightness: default navy is hsl(214,57%,14%)
+  // We shift lightness: -10% at factor=-1, 0 at factor=0, +12% at factor=+1
+  const navyL  = 14  + factor * (factor < 0 ? 8  : 10);
+  const bg2L   = 18  + factor * (factor < 0 ? 8  : 10);
+  const bg3L   = 22  + factor * (factor < 0 ? 8  : 10);
+  const bg4L   = 27  + factor * (factor < 0 ? 8  : 10);
+  const root = document.documentElement;
+  root.style.setProperty('--navy',  `hsl(214,57%,${Math.max(4,Math.min(38,navyL))}%)`);
+  root.style.setProperty('--bg2',   `hsl(214,50%,${Math.max(6,Math.min(42,bg2L))}%)`);
+  root.style.setProperty('--bg3',   `hsl(214,46%,${Math.max(8,Math.min(46,bg3L))}%)`);
+  root.style.setProperty('--bg4',   `hsl(214,42%,${Math.max(10,Math.min(50,bg4L))}%)`);
+}
+
+function buildPalGrid(){
+  const grid = document.getElementById('simplePalGrid');
+  if(!grid) return;
+  grid.innerHTML = PALETTES_SIMPLE.map(p=>`
+    <button class="pal-btn${simplePalette===p.id?' active':''}"
+      style="background:${simplePalette===p.id?`${p.color}22`:'rgba(255,255,255,.05)'};border-color:${simplePalette===p.id?p.color:'transparent'}"
+      onclick="applySimplePalette('${p.id}')">
+      <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${p.color};margin-right:5px;vertical-align:middle;flex-shrink:0"></span>${p.label}
+    </button>`).join('');
+}
+
+function toggleSettings(){
+  const drawer = document.getElementById('settingsDrawer');
+  drawer.classList.toggle('open');
+  if(drawer.classList.contains('open')){
+    buildPalGrid();
+    const csl = document.getElementById('contrastSlider');
+    const cvl = document.getElementById('contrastVal');
+    if(csl) csl.value = simpleContrast;
+    if(cvl) cvl.textContent = simpleContrast;
+    const fsl = document.getElementById('fontSizeSlider');
+    const fvl = document.getElementById('fontSizeVal');
+    if(fsl) fsl.value = taskFontSize;
+    if(fvl) fvl.textContent = taskFontSize + 'px';
+  }
+}
+
+async function manualRefresh(){
+  toast('↻ Refreshing…');
+  await loadFromSupabase();
+  renderAll();
+  toast('✓ Data refreshed');
+}
+
+function toggleSb(checked){
+  supabaseEnabled = checked;
+  localStorage.setItem('hw_sb_enabled', checked ? '1' : '0');
+  const track = document.getElementById('sbTrack');
+  const thumb = document.getElementById('sbThumb');
+  if(track) track.style.background = checked ? 'var(--acc)' : 'rgba(255,255,255,.15)';
+  if(thumb) thumb.style.transform = checked ? 'translateX(18px)' : 'translateX(0)';
+  setSyncDot(checked ? 'synced' : 'offline');
+}
+
+// ── REALTIME POLLING ─────────────────────────────────────────
+let _pollTimer = null;
+function startPolling(){
+  stopPolling();
+  _pollTimer = setInterval(async ()=>{
+    if(!supabaseEnabled) return;
+    try {
+      const tr = await sbFetch('tasks?order=order_val.asc');
+      if(tr.ok){
+        const raw = await tr.json();
+        if(raw.length){
+          tasks = raw.map(r=>({
+            id:r.task_id, _sbId:r.id, parentId:r.parent_id,
+            phase:r.phase, category:r.category||'', task:r.task,
+            owner:Array.isArray(r.owner)?r.owner:(r.owner?[r.owner]:[]),
+            status:r.status||'Not Started', priority:r.priority||'',
+            done:!!r.done, pct:r.pct||0,
+            startDate:r.start_date||'', dueDate:r.due_date||'',
+            time:r.time_est||'', notes:r.notes||'',
+            blocker:r.blocker||'', dependsOn:r.depends_on||null,
+            order:r.order_val||0, tags:Array.isArray(r.tags)?r.tags:[]
+          }));
+          nextId = Math.max(...tasks.map(t=>t.id),0)+1;
+        }
+      }
+      const nr = await sbFetch('notes?order=pinned.desc,updated_at.desc');
+      if(nr.ok){ notes = await nr.json(); }
+      renderAll();
+      setSyncDot('synced');
+    } catch(e){ setSyncDot('error'); }
+  }, 30000); // poll every 30 seconds
+}
+function stopPolling(){ if(_pollTimer){ clearInterval(_pollTimer); _pollTimer=null; } }
+
+// Close settings drawer on Escape
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    document.getElementById('settingsDrawer').classList.remove('open');
+    document.getElementById('statusPop').classList.remove('open');
+  }
+});
+
+function setStatFilter(card, filter){
+  activeStatFilter = filter;
+  activeToolbarStatus = ''; // clear toolbar filter when KPI card clicked
+  document.querySelectorAll('.stat-card').forEach(c=>c.classList.remove('stat-active'));
+  card.classList.add('stat-active');
+  // Sync toolbar filter buttons — highlight "All" when clearing, else match
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.status === filter);
+  });
+  renderAll();
+}
+
+// ── RENDER CARDS ──────────────────────────────────────────────
+function renderAll(){
+  updateStats();
+  buildTabs();
+  if(activeTab==='__stickys__'){
+    renderStickys();
+  } else {
+    renderCards();
+  }
+}
+
+function getVisibleTasks(){
+  const search = document.getElementById('searchInput')?.value.trim().toLowerCase()||'';
+  // Active status filter: toolbar takes priority over KPI card filter
+  const statusFilter = activeToolbarStatus || activeStatFilter;
+  return tasks.filter(t=>{
+    // Owner
+    if(activeOwner!=='__all__' && !(t.owner||[]).includes(activeOwner)) return false;
+    // Status filter (from toolbar buttons OR KPI stat cards)
+    if(statusFilter && t.status!==statusFilter) return false;
+    // Phase tab: only apply when no KPI-card-wide filter is active
+    if(!activeStatFilter && activeTab!=='__stickys__' && t.phase!==activeTab) return false;
+    // Search
+    if(search){
+      const haystack = [t.task, ...(t.tags||[]), ...(t.owner||[]), t.notes||'', t.phase].join(' ').toLowerCase();
+      if(!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+function renderCards(){
+  const list = document.getElementById('taskList');
+  if(!list) return;
+  const visible = getVisibleTasks();
+  // separate parents and subtasks
+  const parents = visible.filter(t=>!t.parentId);
+  const subMap = {};
+  tasks.filter(t=>t.parentId).forEach(t=>{ (subMap[t.parentId]||(subMap[t.parentId]=[])).push(t); });
+
+  if(!parents.length){
+    list.innerHTML = `<div class="empty-state"><div class="ei">📋</div><p>No tasks found.</p></div>`;
+    return;
+  }
+  list.innerHTML = parents.map(t=>renderCard(t, subMap)).join('');
+}
+
+function renderCard(t, subMap){
+  const sc = ST_CLS[t.status]||'sc-none';
+  const stPill = ST_PILL[t.status]||'stp-none';
+  const stLabel = t.status||'Not Started';
+  const prCls = PR_CLS[t.priority||'']||'pri-none';
+  const isExp = expandedCards.has(t.id);
+  const hasNotes = !!(t.notes && t.notes.trim());
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dueFmt = t.dueDate ? (() => {
+    const d = new Date(t.dueDate+'T00:00:00');
+    const overdue = d < today && t.status!=='Complete';
+    return `<span class="due-badge${overdue?' overdue':''}">📅 ${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>`;
+  })() : '';
+  const priHtml = t.priority
+    ? `<span class="pri-badge ${prCls}"><span class="pri-dot-sm ${t.priority==='High'?'pd-high':t.priority==='Medium'?'pd-med':'pd-low'}"></span>${t.priority}</span>`
+    : '';
+  // Tags: clickable to filter, stop propagation so card click doesn't also fire
+  const tagHtml = (t.tags||[]).map(tag=>`<span class="tag-chip" onclick="event.stopPropagation();filterByTag('${esc(tag)}')" title="Filter by ${esc(tag)}">${esc(tag)}</span>`).join('');
+  const ownerHtml = (t.owner||[]).map(o=>`<span class="owner-chip">${esc(o)}</span>`).join('');
+  const subs = subMap[t.id]||[];
+  const subHtml = subs.length
+    ? subs.filter(s=>{
+        if(activeToolbarStatus && s.status!==activeToolbarStatus) return false;
+        if(activeStatFilter && s.status!==activeStatFilter) return false;
+        return true;
+      }).map(s=>renderCard(s, {})).join('')
+    : '';
+
+  return `
+<div class="task-card${t.done?' done-card':''}${t.parentId?' subtask-card':''}" id="card-${t.id}" onclick="onCardClick(event,${t.id})">
+  <div class="card-row">
+    ${hasNotes
+      ? `<button class="expand-btn${isExp?' open':''}" id="exp-${t.id}" onclick="event.stopPropagation();toggleNotes(${t.id})">▶</button>`
+      : `<span class="expand-btn-spacer"></span>`}
+    <button class="status-circle ${sc}" title="Change status" onclick="event.stopPropagation();openStatusPop(event,${t.id})">
+      ${t.status==='Complete'?'✓':t.status==='In Progress'?'▶':t.status==='On Hold'?'⏸':''}
+    </button>
+    <div class="card-body">
+      <div class="card-title${t.done?' done-text':''}" id="title-${t.id}" ondblclick="event.stopPropagation();startInlineEdit(${t.id})">${esc(t.task)}</div>
+      <div class="card-meta">
+        ${priHtml}
+        ${dueFmt}
+        ${tagHtml}
+      </div>
+    </div>
+    <div class="card-right" onclick="event.stopPropagation()">
+      ${ownerHtml}
+      <span class="st-pill ${stPill}">${esc(stLabel)}</span>
+      <div class="card-actions">
+        <button class="ca-btn" title="Edit" onclick="openTaskModal(${t.id})">✎</button>
+        <button class="ca-btn del" title="Delete" onclick="deleteTask(${t.id})">🗑</button>
+      </div>
+    </div>
+  </div>
+  ${hasNotes?`<div class="card-notes-panel${isExp?' show':''}" id="notes-${t.id}"><div class="notes-text">${esc(t.notes)}</div></div>`:''}
+</div>
+${subHtml}`;
+}
+
+function toggleNotes(id){
+  if(expandedCards.has(id)) expandedCards.delete(id); else expandedCards.add(id);
+  const panel = document.getElementById('notes-'+id);
+  const btn = document.getElementById('exp-'+id);
+  if(panel) panel.classList.toggle('show', expandedCards.has(id));
+  if(btn) btn.classList.toggle('open', expandedCards.has(id));
+}
+
+// ── CARD CLICK → OPEN MODAL ───────────────────────────────────
+function onCardClick(e, id){
+  // If clicking on the inline input, do nothing
+  if(e.target.classList.contains('card-title-input')) return;
+  // If we're currently inline-editing this card, don't open modal
+  if(inlineEditId === id) return;
+  openTaskModal(id);
+}
+
+// ── INLINE TITLE EDIT ─────────────────────────────────────────
+function startInlineEdit(id){
+  if(inlineEditId === id) return;
+  // Commit any previous inline edit first
+  if(inlineEditId !== null) commitInlineEdit(inlineEditId, false);
+  inlineEditId = id;
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  const titleEl = document.getElementById('title-'+id);
+  if(!titleEl) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'card-title-input';
+  input.value = t.task;
+  input.onclick = e => e.stopPropagation();
+  input.onkeydown = e => {
+    e.stopPropagation();
+    if(e.key==='Enter'){ e.preventDefault(); commitInlineEdit(id, true); }
+    if(e.key==='Escape'){ commitInlineEdit(id, false); }
+  };
+  input.onblur = () => commitInlineEdit(id, true);
+  titleEl.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+function commitInlineEdit(id, save){
+  const input = document.querySelector(`#card-${id} .card-title-input`);
+  if(!input) { inlineEditId = null; return; }
+  const t = tasks.find(x=>x.id===id);
+  if(t && save){
+    const newName = input.value.trim();
+    if(newName && newName !== t.task){
+      t.task = newName;
+      saveTaskToSb(t);
+    }
+  }
+  inlineEditId = null;
+  // Re-render just this card to restore normal view
+  renderCards();
+}
+
+// ── TAG FILTER ────────────────────────────────────────────────
+function filterByTag(tag){
+  const search = document.getElementById('searchInput');
+  if(search){
+    search.value = tag;
+    renderCards();
+  }
+}
+
+// ── STATUS POP ────────────────────────────────────────────────
+function openStatusPop(e, id){
+  e.stopPropagation();
+  statusPopTarget = id;
+  const pop = document.getElementById('statusPop');
+  pop.style.left = e.clientX+'px';
+  pop.style.top = (e.clientY+4)+'px';
+  pop.classList.add('open');
+}
+function applyStatus(status){
+  if(!statusPopTarget) return;
+  const t = tasks.find(x=>x.id===statusPopTarget);
+  if(t){
+    t.status = status;
+    t.done = status==='Complete';
+    saveTaskToSb(t);
+    renderAll();
+  }
+  document.getElementById('statusPop').classList.remove('open');
+  statusPopTarget = null;
+}
+document.addEventListener('click',()=>{ document.getElementById('statusPop').classList.remove('open'); });
+
+// ── TASK MODAL ────────────────────────────────────────────────
+function openTaskModal(id=null){
+  document.getElementById('modalTitle').textContent = id ? 'Edit Task' : 'Add Task';
+  document.getElementById('editId').value = id||'';
+  const fph = document.getElementById('fPhase');
+  fph.innerHTML = phases.map(p=>`<option${p===activeTab?' selected':''}>${esc(p)}</option>`).join('');
+  selectedOwners = [];
+  if(id){
+    const t = tasks.find(x=>x.id===id);
+    if(!t) return;
+    fph.value = t.phase;
+    document.getElementById('fPriority').value = t.priority||'';
+    document.getElementById('fStatus').value = t.status||'Not Started';
+    document.getElementById('fTask').value = t.task||'';
+    document.getElementById('fStart').value = t.startDate||'';
+    document.getElementById('fDue').value = t.dueDate||'';
+    document.getElementById('fTags').value = (t.tags||[]).join(' ');
+    document.getElementById('fNotes').value = t.notes||'';
+    selectedOwners = [...(t.owner||[])];
+  } else {
+    document.getElementById('fPriority').value='';
+    document.getElementById('fStatus').value='Not Started';
+    document.getElementById('fTask').value='';
+    document.getElementById('fStart').value='';
+    document.getElementById('fDue').value='';
+    document.getElementById('fTags').value='';
+    document.getElementById('fNotes').value='';
+    // Default assignee: use the active Viewing filter if a specific person is selected,
+    // otherwise fall back to the logged-in user
+    const defaultOwner = (activeOwner !== '__all__') ? activeOwner : currentUser;
+    if(defaultOwner && people.includes(defaultOwner)){
+      selectedOwners = [defaultOwner];
+    }
+  }
+  renderOwnerWrap();
+  document.getElementById('taskModal').classList.add('open');
+  // Focus the task name field
+  setTimeout(()=>{ document.getElementById('fTask').focus(); }, 80);
+}
+
+function renderOwnerWrap(){
+  const wrap = document.getElementById('fOwnerWrap');
+  const chips = selectedOwners.map(o=>`<span class="ow-chip">${esc(o)}<button onclick="removeOwner('${esc(o)}')" type="button">×</button></span>`).join('');
+  const placeholder = selectedOwners.length?'':`<span style="color:var(--mid);font-size:12px">Click to assign…</span>`;
+  wrap.innerHTML = chips + placeholder;
+}
+function removeOwner(name){
+  selectedOwners = selectedOwners.filter(o=>o!==name);
+  renderOwnerWrap();
+}
+function toggleOwnerDrop(){
+  const drop = document.getElementById('fOwnerDrop');
+  if(drop.style.display==='block'){drop.style.display='none';return;}
+  const rect = document.getElementById('fOwnerWrap').getBoundingClientRect();
+  drop.style.top = (rect.bottom+4)+'px';
+  drop.style.left = rect.left+'px';
+  drop.style.width = rect.width+'px';
+  drop.style.display='block';
+  drop.innerHTML = people.map(p=>`<div class="ow-opt${selectedOwners.includes(p)?' sel':''}" onclick="toggleOwner('${esc(p)}')">${selectedOwners.includes(p)?'✓ ':''} ${esc(p)}</div>`).join('');
+}
+function toggleOwner(name){
+  if(selectedOwners.includes(name)) selectedOwners=selectedOwners.filter(o=>o!==name);
+  else selectedOwners.push(name);
+  renderOwnerWrap();
+  document.getElementById('fOwnerDrop').innerHTML = people.map(p=>`<div class="ow-opt${selectedOwners.includes(p)?' sel':''}" onclick="toggleOwner('${esc(p)}')">${selectedOwners.includes(p)?'✓ ':''} ${esc(p)}</div>`).join('');
+}
+document.addEventListener('click', e=>{
+  const drop=document.getElementById('fOwnerDrop');
+  const wrap=document.getElementById('fOwnerWrap');
+  if(drop && wrap && !wrap.contains(e.target) && !drop.contains(e.target)) drop.style.display='none';
+});
+
+function saveTask(){
+  const id = document.getElementById('editId').value;
+  const taskName = document.getElementById('fTask').value.trim();
+  if(!taskName){ toast('⚠ Task name is required'); return; }
+  const rawTags = document.getElementById('fTags').value.trim().split(/\s+/).filter(t=>t.startsWith('#'));
+  rawTags.forEach(tag=>{ if(!allTags.includes(tag)) allTags.push(tag); });
+  if(id){
+    const t = tasks.find(x=>x.id===Number(id));
+    if(!t) return;
+    t.phase = document.getElementById('fPhase').value;
+    t.priority = document.getElementById('fPriority').value;
+    t.status = document.getElementById('fStatus').value;
+    t.task = taskName;
+    t.owner = [...selectedOwners];
+    t.startDate = document.getElementById('fStart').value;
+    t.dueDate = document.getElementById('fDue').value;
+    t.tags = rawTags;
+    t.notes = document.getElementById('fNotes').value;
+    t.done = t.status==='Complete';
+    saveTaskToSb(t);
+  } else {
+    const newTask = {
+      id: nextId++,
+      phase: document.getElementById('fPhase').value,
+      priority: document.getElementById('fPriority').value,
+      status: document.getElementById('fStatus').value,
+      task: taskName,
+      owner: [...selectedOwners],
+      startDate: document.getElementById('fStart').value,
+      dueDate: document.getElementById('fDue').value,
+      tags: rawTags,
+      notes: document.getElementById('fNotes').value,
+      done: false, pct:0, order:tasks.length, tags:rawTags,
+      parentId:null, blocker:'', dependsOn:null, time:''
+    };
+    tasks.push(newTask);
+    saveTaskToSb(newTask);
+  }
+  closeOverlay('taskModal');
+  renderAll();
+}
+
+function deleteTask(id){
+  if(!confirm('Delete this task?')) return;
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  deleteTaskFromSb(t);
+  tasks = tasks.filter(x=>x.id!==id && x.parentId!==id);
+  renderAll();
+  toast('🗑 Task deleted');
+}
+
+// ── QUICK ADD ─────────────────────────────────────────────────
+function quickAddKeydown(e){
+  if(e.key !== 'Enter') return;
+  const input = document.getElementById('qaInput');
+  const name = input.value.trim();
+  if(!name) return;
+  const defaultOwner = (activeOwner !== '__all__') ? activeOwner : currentUser;
+  const phase = (activeTab && activeTab !== '__stickys__') ? activeTab : (phases[0]||'Phase 1');
+  const newTask = {
+    id: nextId++,
+    phase,
+    priority: '',
+    status: 'Not Started',
+    task: name,
+    owner: (defaultOwner && people.includes(defaultOwner)) ? [defaultOwner] : [],
+    startDate:'', dueDate:'', tags:[], notes:'',
+    done:false, pct:0, order:tasks.length,
+    parentId:null, blocker:'', dependsOn:null, time:''
+  };
+  tasks.push(newTask);
+  saveTaskToSb(newTask);
+  input.value = '';
+  renderAll();
+  toast('✓ Task added');
+}
+
+// ── TOOLBAR STATUS FILTER ─────────────────────────────────────
+function setStatusFilter(btn, status){
+  activeToolbarStatus = status;
+  // Clear KPI card filter when toolbar filter is used
+  if(status) activeStatFilter = '';
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // Sync KPI cards — highlight the matching stat card if filtering
+  document.querySelectorAll('.stat-card').forEach(c=>{
+    c.classList.toggle('stat-active', c.dataset.filter === status);
+  });
+  renderAll();
+}
+
+// ── STICKYS ───────────────────────────────────────────────────
+function renderStickys(){
+  const grid = document.getElementById('stickysGrid');
+  if(!grid) return;
+  const sorted = [...notes].sort((a,b)=>((b.pinned?1:0)-(a.pinned?1:0)));
+  if(!sorted.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:50px;color:var(--mid)">No stickys yet. Add your first one!</div>`;
+    return;
+  }
+  grid.innerHTML = sorted.map(n=>{
+    const col = n.color||'#FFF0C0';
+    const tagHtml = (n.tags||[]).map(t=>`<span class="sticky-tag">${esc(t)}</span>`).join('');
+    const dt = n.updated_at ? new Date(n.updated_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    return `
+<div class="sticky-card" style="background:${col};border-color:${col}88">
+  <div class="sticky-top">
+    <div class="sticky-title">${esc(n.title||'Untitled')}</div>
+    ${n.pinned?`<span class="sticky-pin">📌</span>`:''}
+  </div>
+  <div class="sticky-body">${n.body||''}</div>
+  ${tagHtml?`<div class="sticky-tags">${tagHtml}</div>`:''}
+  <div class="sticky-foot">
+    <span class="sticky-date">${dt}</span>
+    <div class="sticky-actions">
+      <button class="sticky-act-btn" title="Edit" onclick="openNoteModal('${n.id}')">✎</button>
+      <button class="sticky-act-btn" title="Delete" onclick="deleteNote('${n.id}')">🗑</button>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+}
+
+// ── NOTE MODAL ────────────────────────────────────────────────
+function openNoteModal(id=null){
+  document.getElementById('noteModalTitle').textContent = id?'Edit Sticky':'Add Sticky';
+  document.getElementById('noteEditId').value = id||'';
+  const copts = document.getElementById('noteColorOpts');
+  copts.innerHTML = NOTE_COLORS.map(c=>`<div class="note-color-opt" style="background:${c}" onclick="selectNoteColor('${c}')"></div>`).join('');
+  if(id){
+    const n=notes.find(x=>String(x.id)===String(id)); if(!n)return;
+    document.getElementById('nTitle').value=n.title||'';
+    document.getElementById('nBody').innerHTML=n.body||'';
+    document.getElementById('nTags').value=(n.tags||[]).join(' ');
+    document.getElementById('nPinned').checked=!!n.pinned;
+    selectNoteColor(n.color||NOTE_COLORS[0]);
+  } else {
+    document.getElementById('nTitle').value='';
+    document.getElementById('nBody').innerHTML='';
+    document.getElementById('nTags').value='';
+    document.getElementById('nPinned').checked=false;
+    selectNoteColor(NOTE_COLORS[0]);
+  }
+  document.getElementById('noteModal').classList.add('open');
+}
+function selectNoteColor(c){
+  selectedNoteColor=c;
+  document.querySelectorAll('.note-color-opt').forEach(el=>{
+    el.classList.toggle('selected', el.style.background===c || el.style.backgroundColor===c);
+  });
+}
+function nCmd(cmd){ document.execCommand(cmd,false,null); }
+function saveNote(){
+  const id = document.getElementById('noteEditId').value;
+  const title = document.getElementById('nTitle').value.trim();
+  const body = document.getElementById('nBody').innerHTML;
+  const tags = document.getElementById('nTags').value.trim().split(/\s+/).filter(t=>t);
+  const pinned = document.getElementById('nPinned').checked;
+  if(id){
+    const n=notes.find(x=>String(x.id)===String(id));
+    if(!n) return;
+    Object.assign(n,{title,body,tags,pinned,color:selectedNoteColor,updated_at:new Date().toISOString()});
+    saveNoteToSb(n);
+  } else {
+    const n={id:'local-'+Date.now(),title,body,tags,pinned,color:selectedNoteColor,updated_at:new Date().toISOString()};
+    notes.unshift(n);
+    saveNoteToSb(n);
+  }
+  closeOverlay('noteModal');
+  renderStickys();
+}
+function deleteNote(id){
+  if(!confirm('Delete this sticky?')) return;
+  notes=notes.filter(n=>String(n.id)!==String(id));
+  deleteNoteFromSb(id);
+  renderStickys();
+  toast('🗑 Sticky deleted');
+}
+
+// ── OVERLAYS ──────────────────────────────────────────────────
+function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
+// Close on backdrop click
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('mousedown', e=>{ if(e.target===ov) closeOverlay(ov.id); });
+});
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init(){
+  // Restore supabase toggle state
+  const sbStored = localStorage.getItem('hw_sb_enabled');
+  if(sbStored === '0'){
+    supabaseEnabled = false;
+    const tog = document.getElementById('sbToggle');
+    const track = document.getElementById('sbTrack');
+    const thumb = document.getElementById('sbThumb');
+    if(tog) tog.checked = false;
+    if(track) track.style.background = 'rgba(255,255,255,.15)';
+    if(thumb) thumb.style.transform = 'translateX(0)';
+  }
+  // Apply saved local palette before anything renders
+  document.documentElement.dataset.palette = simplePalette;
+  // Apply saved contrast
+  applyContrast(simpleContrast);
+  const sl = document.getElementById('contrastSlider');
+  if(sl) sl.value = simpleContrast;
+  // Apply saved task font size
+  applyTaskFontSize(taskFontSize);
+  const fsl = document.getElementById('fontSizeSlider');
+  if(fsl) fsl.value = taskFontSize;
+  await loadFromSupabase();
+  // apply branding (title only — subtitle is always "Simple View v1.5.3")
+  document.getElementById('appTitle').textContent = appTitle;
+  if(logoUrl){ const img=document.getElementById('logoImg'); img.src=logoUrl; img.classList.add('visible'); }
+  // Default to first phase tab
+  activeTab = phases[0]||'Phase 1';
+  // Build owner pills
+  buildOwnerPills();
+  // Set user chip
+  const chip=document.getElementById('userChip');
+  if(currentUser){
+    chip.textContent='👤 '+currentUser;
+    activeOwner=currentUser;
+  }
+  // Refresh owner pills with correct active
+  buildOwnerPills();
+  renderAll();
+  // Hide loading
+  document.getElementById('loadingOverlay').style.display='none';
+  // Who are you?
+  if(!currentUser) openWhoModal();
+  // Start background sync polling
+  startPolling();
+}
+
+// Pause polling when tab is hidden, resume when visible
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden) stopPolling(); else startPolling();
+});
+
+init();
+</script>
+</body>
+</html>
