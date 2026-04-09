@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.1                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.2                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -357,7 +357,7 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.1</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
@@ -792,7 +792,7 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.1.1', logoUrl='';
+let appVersion='v2.1.2', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
 let currentUser=localStorage.getItem('hw_user')||'';
@@ -1175,6 +1175,7 @@ function buildTabs(){
   bar.innerHTML+=`<div style="flex:1"></div>`;
   bar.innerHTML+=`<button class="tab ${currentPage==='notes'?'active':''}" onclick="goPage('notes',this)">📝 Notes <span class="cnt" id="notesCnt">${notes.length}</span></button>`;
   bar.innerHTML+=`<button class="tab ${currentPage==='settings'?'active':''}" onclick="goPage('settings',this)">⚙ Settings</button>`;
+  bar.innerHTML+=`<a href="https://wsadams.github.io/intel/MissionControl/" target="_blank" class="tab" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Open Mission Control">🎯 Mission Control ↗</a>`;
 }
 function goPage(page, el){
   currentPage=page;
@@ -1454,7 +1455,7 @@ function renderOwnerTags(owner,small=false){
   const sz=small?'font-size:10px;':'';
   return arr.map(o=>`<span class="owner-tag" style="${sz}margin-right:2px">${esc(o)}</span>`).join('');
 }
-function getSelectedOwners(){return[...document.querySelectorAll('#fOwnerWrap .owner-cb:checked')].map(cb=>cb.value);}
+function getSelectedOwners(){return[...document.querySelectorAll('#fOwnerDropdown .owner-cb:checked')].map(cb=>cb.value);}
 function toggleOwnerDropdown(){
   const wrap=document.getElementById('fOwnerWrap');const dd=document.getElementById('fOwnerDropdown');if(!dd)return;
   ownerDropdownOpen=!ownerDropdownOpen;
@@ -1600,7 +1601,7 @@ async function saveTask(){
     parentId:parentId||null,
     phase:document.getElementById('fPhase').value,
     category:'', task:name,
-    owner:getSelectedOwners(),
+    owner:(()=>{ const o=getSelectedOwners(); if(!o.length&&existing) return existing.owner||[]; return o; })(),
     time:getTimeValue(), notes:document.getElementById('fNotes').value.trim(),
     status, priority:document.getElementById('fPriority').value,
     done:status==='Complete',
@@ -2022,7 +2023,7 @@ function previewBranding(){
   const t=document.getElementById('setTitle').value||'Homefront Watch';
   const s=document.getElementById('setSubtitle').value||'';
   const logo=document.getElementById('setLogoUrl').value||'';
-  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.1</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span>`;
   document.getElementById('headerSubtitle').textContent=s;
   const img=document.getElementById('logoImg');
   if(logo){img.src=logo;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -2030,7 +2031,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion='v2.1.1';
+  appVersion='v2.1.2';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   applyBrandingToHeader();
@@ -2052,7 +2053,7 @@ function previewLogoPadding(){
   document.documentElement.style.setProperty('--logo-pad-y', val+'px');
 }
 function applyBrandingToHeader(){
-  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.1</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span>`;
   document.getElementById('headerSubtitle').textContent=appSubtitle;
   const img=document.getElementById('logoImg');
   if(logoUrl){img.src=logoUrl;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
