@@ -193,7 +193,7 @@ td input[type=date].ci{color-scheme:dark;}
 .tag-suggest-item{padding:5px 10px;font-size:12.5px;border-radius:5px;cursor:pointer;color:var(--offwhite);}
 .tag-suggest-item:hover{background:var(--acc3);}
 /* row action btns */
-.del-btn{background:none;border:none;color:rgba(231,76,60,.35);cursor:pointer;padding:3px 4px;border-radius:3px;transition:all .14s;display:inline-flex;align-items:center;}
+.del-btn{background:none;border:none;color:rgba(231,76,60,.55);cursor:pointer;padding:3px 4px;border-radius:3px;transition:all .14s;display:inline-flex;align-items:center;}
 .del-btn:hover{color:#E74C3C;background:rgba(231,76,60,.12);}
 .del-btn:disabled{opacity:.2;cursor:not-allowed;}
 .del-btn svg{stroke:currentColor;}
@@ -295,6 +295,7 @@ td input[type=date].ci{color-scheme:dark;}
 .sticky-del svg{stroke:currentColor;width:12px;height:12px;}
 .sticky-edit{font-size:11px;cursor:pointer;opacity:.4;color:#333;}.sticky-edit:hover{opacity:.8;}
 .notes-table table{width:100%;border-collapse:collapse;}
+.notes-table td{overflow:visible!important;text-overflow:clip!important;}
 .notes-table thead th{padding:9px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border);}
 .notes-table tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .1s;}
 .notes-table tbody tr:hover{background:rgba(255,255,255,.025);}
@@ -463,7 +464,7 @@ td input[type=date].ci{color-scheme:dark;}
         <table><thead><tr>
           <th style="width:30px">#</th><th>Title</th><th>Preview</th>
           <th style="width:100px">Tags</th><th style="width:80px">Updated</th>
-          <th style="width:60px"></th>
+          <th style="width:72px"></th>
         </tr></thead><tbody id="notesTbody"></tbody></table>
       </div>
     </div>
@@ -1075,7 +1076,7 @@ function renderNotesTable(filtered){
       <td style="color:var(--mid);font-size:12px">${esc(snippet)}</td>
       <td>${tags}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid);white-space:nowrap">${d}</td>
-      <td style="white-space:nowrap">
+      <td style="white-space:nowrap;min-width:72px;padding-right:8px">
         <button class="edit-row-btn" onclick="openNoteModal(${n.id})" title="Edit note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
         <button class="del-btn" onclick="deleteNote(${n.id})" title="Delete note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
       </td>
@@ -1123,7 +1124,7 @@ function subscribeRealtime(){
 // ══════════════════════════════════════════════════════════════
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const cid=s=>s.replace(/[^a-z0-9]/gi,'-');
-function fmtDate(d){if(!d)return'';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y.slice(2)}`;}
+function fmtDate(d){if(!d)return'';const[y,m,dd]=d.split('-');return`${m}/${dd}/${y.slice(2)}`;}
 function isOverdue(d){if(!d)return false;return new Date(d)<new Date(new Date().toDateString());}
 function rebuildCats(){[...new Set(tasks.map(t=>t.category))].filter(Boolean).forEach(c=>{if(!allTags.includes(c))allTags.push(c);});}
 function calcPct(t){const kids=tasks.filter(s=>s.parentId===t.id);if(!kids.length)return t.pct||0;return Math.round(kids.filter(s=>s.done).length/kids.length*100);}
