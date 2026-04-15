@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.2                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.3                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -130,7 +130,7 @@ thead th.sort-asc::after{content:' ↑';color:var(--acc);}
 thead th.sort-desc::after{content:' ↓';color:var(--acc);}
 .cid{width:42px;}.cdg{width:24px;}.cexp{width:48px;}.cck{width:28px;}.cpct{width:62px;}
 .cph{width:86px;}.cpr{width:70px;}.ctag{width:110px;}.ctask{width:auto;}
-.cown{width:110px;}.cst{width:104px;}.csd{width:80px;}.cdd{width:80px;}.ctm{width:80px;}.cno{width:30px;}.ced{width:26px;}.cdl{width:26px;}
+.cown{width:110px;}.cst{width:104px;}.csd{width:80px;}.cdd{width:80px;}.ctm{width:80px;}.cno{width:30px;}.ced{width:30px;}.cdl{width:36px;padding-right:8px!important;}
 tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .1s;}
 tbody tr:hover{background:rgba(255,255,255,.025);}
 tbody tr:last-child{border-bottom:none;}
@@ -193,11 +193,13 @@ td input[type=date].ci{color-scheme:dark;}
 .tag-suggest-item{padding:5px 10px;font-size:12.5px;border-radius:5px;cursor:pointer;color:var(--offwhite);}
 .tag-suggest-item:hover{background:var(--acc3);}
 /* row action btns */
-.del-btn{background:none;border:none;color:rgba(231,76,60,.28);cursor:pointer;font-size:12px;padding:2px 3px;border-radius:3px;transition:all .14s;}
+.del-btn{background:none;border:none;color:rgba(231,76,60,.35);cursor:pointer;padding:3px 4px;border-radius:3px;transition:all .14s;display:inline-flex;align-items:center;}
 .del-btn:hover{color:#E74C3C;background:rgba(231,76,60,.12);}
 .del-btn:disabled{opacity:.2;cursor:not-allowed;}
-.edit-row-btn{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:12px;padding:2px 4px;border-radius:3px;transition:all .14s;}
+.del-btn svg{stroke:currentColor;}
+.edit-row-btn{background:none;border:none;color:rgba(255,255,255,.22);cursor:pointer;padding:3px 4px;border-radius:3px;transition:all .14s;display:inline-flex;align-items:center;}
 .edit-row-btn:hover{color:var(--acc);background:var(--acc3);}
+.edit-row-btn svg{stroke:currentColor;}
 .note-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px;line-height:1;transition:all .15s;filter:grayscale(1);opacity:.3;}
 .note-btn.has-note{filter:none;opacity:.85;}.note-btn:hover{opacity:1;filter:none;transform:scale(1.15);}
 .blocker-flag{cursor:help;font-size:12px;}
@@ -289,7 +291,8 @@ td input[type=date].ci{color-scheme:dark;}
 .sticky-body br{display:block;content:'';margin:2px 0;}
 .sticky-foot{display:flex;justify-content:flex-end;gap:5px;margin-top:8px;border-top:1px solid rgba(0,0,0,.1);padding-top:6px;}
 .sticky-pin{font-size:11px;cursor:pointer;opacity:.5;transition:opacity .14s;color:#333;}.sticky-pin:hover{opacity:1;}
-.sticky-del{font-size:11px;cursor:pointer;opacity:.4;transition:all .14s;color:#c0392b;}.sticky-del:hover{opacity:.9;}
+.sticky-del{cursor:pointer;opacity:.5;transition:all .14s;color:#c0392b;display:inline-flex;align-items:center;}.sticky-del:hover{opacity:1;}
+.sticky-del svg{stroke:currentColor;width:12px;height:12px;}
 .sticky-edit{font-size:11px;cursor:pointer;opacity:.4;color:#333;}.sticky-edit:hover{opacity:.8;}
 .notes-table table{width:100%;border-collapse:collapse;}
 .notes-table thead th{padding:9px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:1.3px;border-bottom:1px solid var(--border);}
@@ -357,7 +360,7 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.3</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
@@ -426,9 +429,8 @@ td input[type=date].ci{color-scheme:dark;}
             <th class="csd sortable" onclick="sortBy('startDate')">Start</th>
             <th class="cdd sortable" onclick="sortBy('dueDate')">Due</th>
             <th class="ctm">Est.</th>
-            <th class="cno" title="Notes">📝</th>
-            <th class="ced">✏</th>
-            <th class="cdl">🗑</th>
+            <th class="ced" title="Edit"></th>
+            <th class="cdl" title="Delete"></th>
           </tr></thead>
           <tbody id="taskTbody"></tbody>
         </table>
@@ -730,9 +732,15 @@ td input[type=date].ci{color-scheme:dark;}
         </div>
       </div>
       <div class="field"><label>Tags (space-separated)</label><input type="text" id="nTags" placeholder="#meeting #legal…"></div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer">
-        <input type="checkbox" id="nPinned" style="accent-color:var(--acc)"> Pin this note
-      </label>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer">
+          <input type="checkbox" id="nPinned" style="accent-color:var(--acc)"> Pin this note
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer">
+          <input type="checkbox" id="nSticky" style="accent-color:var(--acc)"> Show as Sticky Note
+          <span style="font-size:11px;color:var(--mid)">(Board view)</span>
+        </label>
+      </div>
     </div>
     <div class="mfoot">
       <button class="btn btn-outline" onclick="closeModal('noteModal')">Cancel</button>
@@ -792,7 +800,7 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.1.2', logoUrl='';
+let appVersion='v2.1.3', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
 let currentUser=localStorage.getItem('hw_user')||'';
@@ -905,7 +913,7 @@ async function loadFromSupabase(){
     }
     // Load notes
     const nr = await sbFetch('notes?order=pinned.desc,updated_at.desc');
-    if(nr.ok){ notes = await nr.json(); }
+    if(nr.ok){ const raw=await nr.json(); notes=raw.map(n=>({...n,isSticky:n.is_sticky??false})); }
 
     setSyncDot('synced');
   } catch(e){
@@ -986,12 +994,14 @@ function openNoteModal(id=null){
     document.getElementById('nBody').innerHTML=n.body||'';
     document.getElementById('nTags').value=(n.tags||[]).join(' ');
     document.getElementById('nPinned').checked=!!n.pinned;
+    document.getElementById('nSticky').checked=!!n.isSticky;
     selectNoteColor(n.color||NOTE_COLORS[0]);
   } else {
     document.getElementById('nTitle').value='';
     document.getElementById('nBody').innerHTML='';
     document.getElementById('nTags').value='';
     document.getElementById('nPinned').checked=false;
+    document.getElementById('nSticky').checked=false;
     selectNoteColor(NOTE_COLORS[0]);
   }
   document.getElementById('noteModal').classList.add('open');
@@ -1015,9 +1025,10 @@ async function saveNote(){
   const tags=(document.getElementById('nTags').value||'').split(/\s+/).map(s=>s.trim()).filter(Boolean);
   const color=(document.getElementById('noteModal').dataset.noteColor)||NOTE_COLORS[0];
   const pinned=document.getElementById('nPinned').checked;
+  const isSticky=document.getElementById('nSticky').checked;
   const existing=id?notes.find(x=>x.id===id):null;
   const obj={
-    id:id||null, title, body, color, pinned, tags,
+    id:id||null, title, body, color, pinned, isSticky, tags,
     updated_at:new Date().toISOString(),
     pos_x:existing?.pos_x??null,
     pos_y:existing?.pos_y??null
@@ -1065,15 +1076,15 @@ function renderNotesTable(filtered){
       <td>${tags}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid);white-space:nowrap">${d}</td>
       <td style="white-space:nowrap">
-        <button class="edit-row-btn" onclick="openNoteModal(${n.id})">✏</button>
-        <button class="del-btn" onclick="deleteNote(${n.id})">✕</button>
+        <button class="edit-row-btn" onclick="openNoteModal(${n.id})" title="Edit note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="del-btn" onclick="deleteNote(${n.id})" title="Delete note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
       </td>
     </tr>`;
   }).join('');
 }
 async function saveNoteToSb(n){
   setSyncDot('saving');
-  const row = {title:n.title||'',body:n.body||'',color:n.color||NOTE_COLORS[0],pinned:!!n.pinned,tags:n.tags||[],pos_x:n.pos_x??null,pos_y:n.pos_y??null};
+  const row = {title:n.title||'',body:n.body||'',color:n.color||NOTE_COLORS[0],pinned:!!n.pinned,is_sticky:!!n.isSticky,tags:n.tags||[],pos_x:n.pos_x??null,pos_y:n.pos_y??null};
   try {
     if(n.id && typeof n.id === 'number' && n.id > 0){
       await sbFetch(`notes?id=eq.${n.id}`, {method:'PATCH', body:JSON.stringify(row)});
@@ -1175,7 +1186,7 @@ function buildTabs(){
   bar.innerHTML+=`<div style="flex:1"></div>`;
   bar.innerHTML+=`<button class="tab ${currentPage==='notes'?'active':''}" onclick="goPage('notes',this)">📝 Notes <span class="cnt" id="notesCnt">${notes.length}</span></button>`;
   bar.innerHTML+=`<button class="tab ${currentPage==='settings'?'active':''}" onclick="goPage('settings',this)">⚙ Settings</button>`;
-  bar.innerHTML+=`<a href="https://wsadams.github.io/intel/MissionControl/" target="_blank" class="tab" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Open Mission Control">🎯 Mission Control ↗</a>`;
+  bar.innerHTML+=`<a href="https://wsadams.github.io/intel/MissionControl/" class="tab" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="Open Mission Control">🎯 Mission Control</a>`;
 }
 function goPage(page, el){
   currentPage=page;
@@ -1269,7 +1280,7 @@ function renderTable(){
   let vis=getVisible();
   if(!sortByOrder&&sortCol){vis=[...vis].sort((a,b)=>sortDir*String(Array.isArray(a[sortCol])?a[sortCol].join(','):a[sortCol]||'').localeCompare(String(Array.isArray(b[sortCol])?b[sortCol].join(','):b[sortCol]||'')));}
   else vis=[...vis].sort((a,b)=>a.order-b.order);
-  if(!vis.length){tbody.innerHTML=`<tr><td colspan="17"><div class="empty"><div class="ei">📋</div>No tasks found.</div></td></tr>`;updateStats();return;}
+  if(!vis.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty"><div class="ei">📋</div>No tasks found.</div></td></tr>`;updateStats();return;}
   let html='';
   vis.forEach((t,idx)=>{
     const pi=phases.indexOf(t.phase);
@@ -1306,9 +1317,8 @@ function renderTable(){
       <td class="editable date-val" ondblclick="ie(this,'startDate','date',${t.id})">${fmtDate(t.startDate)}</td>
       <td class="editable date-val${dueCls}" ondblclick="ie(this,'dueDate','date',${t.id})">${fmtDate(t.dueDate)}</td>
       <td class="editable" ondblclick="ie(this,'time','text',${t.id})" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid)">${esc(t.time)}</td>
-      <td style="text-align:center"><button class="note-btn ${hasNote?'has-note':''}" onclick="openNotePop(${t.id},this)" title="${hasNote?'Edit note':'Add note'}">📝</button></td>
-      <td><button class="edit-row-btn" onclick="openAddModal(${t.id})" title="Edit all fields">✏</button></td>
-      <td><button class="del-btn" onclick="deleteTask(${t.id})" title="${delTitle}" ${hasIncomplete?'disabled':''}>✕</button></td>
+      <td><button class="edit-row-btn" onclick="openAddModal(${t.id})" title="Edit all fields"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td>
+      <td><button class="del-btn" onclick="deleteTask(${t.id})" title="${delTitle}" ${hasIncomplete?'disabled':''}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button></td>
     </tr>`;
     if(hasSubs){
       subs.sort((a,b)=>a.order-b.order).forEach((s,si)=>{
@@ -1334,9 +1344,8 @@ function renderTable(){
           <td class="editable date-val" ondblclick="ie(this,'startDate','date',${s.id})">${fmtDate(s.startDate)}</td>
           <td class="editable date-val${sDueCls}" ondblclick="ie(this,'dueDate','date',${s.id})">${fmtDate(s.dueDate)}</td>
           <td class="editable" ondblclick="ie(this,'time','text',${s.id})" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--mid)">${esc(s.time)}</td>
-          <td style="text-align:center"><button class="note-btn ${sHasNote?'has-note':''}" onclick="openNotePop(${s.id},this)" title="${sHasNote?'Edit note':'Add note'}">📝</button></td>
-          <td><button class="edit-row-btn" onclick="openAddModal(${s.id})" title="Edit all fields">✏</button></td>
-          <td><button class="del-btn" onclick="deleteTask(${s.id})">✕</button></td>
+          <td><button class="edit-row-btn" onclick="openAddModal(${s.id})" title="Edit all fields"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td>
+          <td><button class="del-btn" onclick="deleteTask(${s.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button></td>
         </tr>`;
       });
     }
@@ -1750,6 +1759,8 @@ let _sDrag=null,_sDragOffX=0,_sDragOffY=0;
 
 // ── STICKY BOARD ──────────────────────────────────────────────
 function renderStickyBoard(filtered){
+  // Only show notes marked as sticky in board view
+  filtered = filtered.filter(n=>n.isSticky||n.is_sticky);
   const board=document.getElementById('stickyBoard');
   if(!board)return;
   if(!filtered.length){
@@ -1804,7 +1815,7 @@ function createStickyCard(n,pos,cW){
       <div id="sei-body-${n.id}" class="sn-body-edit" contenteditable="true">${n.body||''}</div>
       <div class="sticky-foot">
         <span class="sticky-pin" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();toggleNotePin(${n.id})">${n.pinned?'📌':'📍'}</span>
-        <span class="sticky-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();deleteNote(${n.id})">✕</span>
+        <span class="sticky-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();deleteNote(${n.id})" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></span>
       </div>`;
     // Focus at end of body after render
     setTimeout(()=>{
@@ -1820,7 +1831,7 @@ function createStickyCard(n,pos,cW){
       ${tags?`<div style="margin-top:5px">${tags}</div>`:''}
       <div class="sticky-foot">
         <span class="sticky-pin" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();toggleNotePin(${n.id})">${n.pinned?'📌':'📍'}</span>
-        <span class="sticky-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();deleteNote(${n.id})">✕</span>
+        <span class="sticky-del" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();deleteNote(${n.id})" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></span>
       </div>`;
     // Click card to edit
     card.addEventListener('click', ()=>{ activeNoteEdit=n.id; renderNotesView(); });
@@ -2023,7 +2034,7 @@ function previewBranding(){
   const t=document.getElementById('setTitle').value||'Homefront Watch';
   const s=document.getElementById('setSubtitle').value||'';
   const logo=document.getElementById('setLogoUrl').value||'';
-  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.3</span>`;
   document.getElementById('headerSubtitle').textContent=s;
   const img=document.getElementById('logoImg');
   if(logo){img.src=logo;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -2031,7 +2042,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion='v2.1.2';
+  appVersion='v2.1.3';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   applyBrandingToHeader();
@@ -2053,7 +2064,7 @@ function previewLogoPadding(){
   document.documentElement.style.setProperty('--logo-pad-y', val+'px');
 }
 function applyBrandingToHeader(){
-  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.2</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.3</span>`;
   document.getElementById('headerSubtitle').textContent=appSubtitle;
   const img=document.getElementById('logoImg');
   if(logoUrl){img.src=logoUrl;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
