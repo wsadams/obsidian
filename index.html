@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.5                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.6                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -409,7 +409,7 @@ td input[type=date].ci{color-scheme:dark;}
         <select class="fsel" id="filterPhase" onchange="renderTable()"><option value="">All Phases</option></select>
         <select class="fsel" id="filterOwner" onchange="renderTable()"><option value="">All Owners</option></select>
         <select class="fsel" id="filterStatus" onchange="renderTable()">
-          <option value="">All Status</option><option>Not Started</option><option>In Progress</option><option>On Hold</option><option>Complete</option>
+          <option value="">All Status</option><option>Not Started</option><option>In Progress</option><option>On Hold</option><option>Complete</option><option value="hide-complete">Hide Completed</option>
         </select>
         <select class="fsel" id="filterPri" onchange="renderTable()">
           <option value="">All Priority</option><option>High</option><option>Medium</option><option>Low</option>
@@ -456,13 +456,13 @@ td input[type=date].ci{color-scheme:dark;}
     <div class="notes-toolbar">
       <div class="srch" style="max-width:280px"><span class="si">🔍</span><input type="text" id="noteSearch" placeholder="Search notes…" oninput="renderNotesView()"></div>
       <div class="view-toggle">
-        <button class="view-btn active" id="notesBoardBtn" onclick="setNotesView('board',this)">📌 Board</button>
-        <button class="view-btn" id="notesTableBtn" onclick="setNotesView('table',this)">☰ List</button>
+        <button class="view-btn" id="notesBoardBtn" onclick="setNotesView('board',this)">📌 Board</button>
+        <button class="view-btn active" id="notesTableBtn" onclick="setNotesView('table',this)">☰ List</button>
       </div>
       <button class="btn btn-gold btn-sm" onclick="openNoteModal()">＋ Add Note</button>
     </div>
-    <div id="notesBoardView"><div id="stickyBoard"></div></div>
-    <div id="notesTableView" style="display:none" class="notes-table">
+    <div id="notesBoardView" style="display:none"><div id="stickyBoard"></div></div>
+    <div id="notesTableView" class="notes-table">
       <div class="tbl-wrap">
         <table><thead><tr>
           <th style="width:30px">#</th><th>Title</th><th>Preview</th>
@@ -804,7 +804,7 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.1.5', logoUrl='';
+let appVersion='v2.1.6', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
 let currentUser=localStorage.getItem('hw_user')||'';
@@ -814,7 +814,7 @@ let defaultPhase='Phase 1';
 let sortCol=null, sortDir=1, sortByOrder=true;
 let dragSrcId=null, kbDragId=null, expanded=new Set();
 let undoStack=[], redoStack=[], MAX_UNDO=30;
-let noteTaskId=null, notesView='board', blockerPanelCollapsed=false;
+let noteTaskId=null, notesView='table', blockerPanelCollapsed=false;
 let ownerDropdownOpen=false, sDragIdx=null, sDragType=null;
 let _tagSuggestIdx=-1;
 let sbRealtime=null;
@@ -1296,7 +1296,7 @@ function getVisible(){
     if(currentTab!=='__all__'&&t.phase!==currentTab)return false;
     if(fp&&t.phase!==fp)return false;
     if(fo&&!(Array.isArray(t.owner)?t.owner.includes(fo):t.owner===fo))return false;
-    if(fs&&t.status!==fs)return false;
+    if(fs==='hide-complete' ? t.done : (fs && t.status!==fs))return false;
     if(fpri&&t.priority!==fpri)return false;
     if(q){
       const hay=[t.task,t.category,t.phase,(t.owner||[]).join(' '),t.notes,(t.tags||[]).join(' ')].join(' ').toLowerCase();
@@ -1342,7 +1342,7 @@ function renderTable(){
       <td class="editable" ondblclick="ie(this,'phase','select',${t.id})"><span class="phase-pill ${pillCls}">${esc(t.phase)}</span></td>
       <td class="editable" ondblclick="ie(this,'priority','select',${t.id})"><span class="pri-dot ${priM.cls}">${priM.lbl}</span></td>
       <td class="editable" ondblclick="ie(this,'tags','tags',${t.id})">${renderTagChips(t.tags)}</td>
-      <td class="editable" ondblclick="ie(this,'task','text',${t.id})" style="font-weight:500">${t.blocker?`<span class="blocker-flag" title="${esc(t.blocker)}">🚫 </span>`:''}<span style="display:${depWarn(t)?'inline':'none'}" title="Depends on incomplete task">⚠ </span>${esc(t.task)}</td>
+      <td class="editable" ondblclick="ie(this,'task','text',${t.id})" style="font-weight:${(t.status==='Not Started'||t.status==='On Hold')?'100':'500'};${(t.status==='Not Started'||t.status==='On Hold')?'color:rgb(209 209 209 / 83%)':''}">${t.blocker?`<span class="blocker-flag" title="${esc(t.blocker)}">🚫 </span>`:''}<span style="display:${depWarn(t)?'inline':'none'}" title="Depends on incomplete task">⚠ </span>${esc(t.task)}</td>
       <td class="editable" ondblclick="ie(this,'owner','owner',${t.id})">${renderOwnerTags(t.owner)}</td>
       <td class="editable" ondblclick="ie(this,'status','select',${t.id})"><span class="status-pill ${stCls}">${t.status}</span></td>
       <td class="editable date-val" ondblclick="ie(this,'startDate','date',${t.id})">${fmtDate(t.startDate)}</td>
@@ -1369,7 +1369,7 @@ function renderTable(){
           <td></td>
           <td class="editable" ondblclick="ie(this,'priority','select',${s.id})"><span class="pri-dot ${sPriM.cls}">${sPriM.lbl}</span></td>
           <td class="editable" ondblclick="ie(this,'tags','tags',${s.id})">${renderTagChips(s.tags)}</td>
-          <td class="editable" ondblclick="ie(this,'task','text',${s.id})" style="font-weight:500;padding-left:18px">${esc(s.task)}</td>
+          <td class="editable" ondblclick="ie(this,'task','text',${s.id})" style="font-weight:${(s.status==='Not Started'||s.status==='On Hold')?'100':'500'};padding-left:18px;${(s.status==='Not Started'||s.status==='On Hold')?'color:rgb(209 209 209 / 83%)':''}">${esc(s.task)}</td>
           <td class="editable" ondblclick="ie(this,'owner','owner',${s.id})">${renderOwnerTags(s.owner)}</td>
           <td class="editable" ondblclick="ie(this,'status','select',${s.id})"><span class="status-pill ${sStCls}">${s.status}</span></td>
           <td class="editable date-val" ondblclick="ie(this,'startDate','date',${s.id})">${fmtDate(s.startDate)}</td>
