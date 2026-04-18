@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.6                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.61                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -364,7 +364,7 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.5</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.61</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
@@ -421,7 +421,7 @@ td input[type=date].ci{color-scheme:dark;}
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-            <th class="cid" style="overflow:visible">ID</th>
+            <th class="cid sortable" style="overflow:visible" onclick="sortBy('id')">ID</th>
             <th class="cdg">⠿</th><th class="cexp"></th><th class="cck" title="Done">✓</th>
             <th class="cpct" onclick="sortPct()" style="cursor:pointer" title="% Complete">%</th>
             <th class="cph sortable" onclick="sortBy('phase')">Phase</th>
@@ -804,7 +804,7 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.1.6', logoUrl='';
+let appVersion='v2.1.61', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
 let currentUser=localStorage.getItem('hw_user')||'';
@@ -1309,7 +1309,7 @@ function renderTable(){
   const tbody=document.getElementById('taskTbody');
   if(!tbody)return;
   let vis=getVisible();
-  if(!sortByOrder&&sortCol){vis=[...vis].sort((a,b)=>sortDir*String(Array.isArray(a[sortCol])?a[sortCol].join(','):a[sortCol]||'').localeCompare(String(Array.isArray(b[sortCol])?b[sortCol].join(','):b[sortCol]||'')));}
+  if(!sortByOrder&&sortCol){vis=[...vis].sort((a,b)=>{if(sortCol==='id')return sortDir*(a.id-b.id);return sortDir*String(Array.isArray(a[sortCol])?a[sortCol].join(','):a[sortCol]||'').localeCompare(String(Array.isArray(b[sortCol])?b[sortCol].join(','):b[sortCol]||''));});}
   else vis=[...vis].sort((a,b)=>a.order-b.order);
   if(!vis.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty"><div class="ei">📋</div>No tasks found.</div></td></tr>`;updateStats();return;}
   let html='';
@@ -2073,7 +2073,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion='v2.1.5';
+  appVersion='v2.1.61';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   applyBrandingToHeader();
