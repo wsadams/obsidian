@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Camera Opportunity — HomeFront Watch</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111318;
+    --card: #181c24;
+    --border: #252a35;
+    --orange: #f4702e;
+    --orange-soft: rgba(244,112,46,0.12);
+    --gold: #c9a84c;
+    --green: #3ecf8e;
+    --green-soft: rgba(62,207,142,0.1);
+    --red: #f25555;
+    --text: #e8eaf0;
+    --muted: #7a8299;
+    --accent: #4a9eff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 48px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(244,112,46,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 6vw, 72px);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--orange); }
+  .hero .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+  .hero-verdict {
+    background: linear-gradient(135deg, rgba(244,112,46,0.08), rgba(244,112,46,0.03));
+    border: 1px solid rgba(244,112,46,0.3);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 18px 22px;
+    max-width: 760px;
+    font-size: 15px;
+    color: #cdd0da;
+    line-height: 1.65;
+  }
+  .hero-verdict strong { color: var(--orange); }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 48px 48px; }
+  @media (max-width: 768px) {
+    .hero { padding: 36px 24px 32px; }
+    .container { padding: 32px 24px; }
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 56px; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .kpi:hover { border-color: var(--orange); }
+  .kpi::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--orange);
+    opacity: 0.4;
+  }
+  .kpi-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: #4a5168;
+    margin-top: 4px;
+  }
+
+  /* STATUS PILL */
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .pill-red { background: rgba(242,85,85,0.15); color: var(--red); border: 1px solid rgba(242,85,85,0.3); }
+  .pill-green { background: rgba(62,207,142,0.12); color: var(--green); border: 1px solid rgba(62,207,142,0.3); }
+  .pill-orange { background: var(--orange-soft); color: var(--orange); border: 1px solid rgba(244,112,46,0.3); }
+  .pill-gold { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: #141820;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(37,42,53,0.6);
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td strong { color: #dde0e8; }
+  .price-tag {
+    font-family: 'DM Mono', monospace;
+    color: var(--gold);
+    font-size: 13px;
+  }
+  .margin-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .margin-high { color: var(--green); }
+  .margin-mid { color: var(--gold); }
+  .margin-low { color: var(--muted); }
+
+  /* CHARTS */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  @media (max-width: 700px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .chart-wrap { position: relative; height: 220px; }
+
+  /* NAPCO BLOCK */
+  .napco-block {
+    background: linear-gradient(135deg, rgba(242,85,85,0.06), rgba(242,85,85,0.02));
+    border: 1px solid rgba(242,85,85,0.25);
+    border-left: 3px solid var(--red);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .napco-block h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--red);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .napco-block p { color: #b0b8cc; font-size: 14px; line-height: 1.65; }
+  .napco-block strong { color: var(--text); }
+
+  /* OPPORTUNITY BLOCK */
+  .opportunity-block {
+    background: var(--green-soft);
+    border: 1px solid rgba(62,207,142,0.25);
+    border-left: 3px solid var(--green);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .opportunity-block h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--green);
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+  }
+  .opportunity-block p { color: #b0b8cc; font-size: 14px; line-height: 1.65; }
+
+  /* TIMELINE */
+  .timeline { margin-top: 16px; }
+  .tl-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .tl-week {
+    flex-shrink: 0;
+    background: var(--orange-soft);
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .tl-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    flex: 1;
+  }
+  .tl-content strong { color: #dde0e8; display: block; margin-bottom: 4px; font-size: 14px; }
+  .tl-content span { color: var(--muted); font-size: 13px; }
+
+  /* AVOID LIST */
+  .avoid-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .avoid-item {
+    background: rgba(242,85,85,0.08);
+    border: 1px solid rgba(242,85,85,0.2);
+    color: var(--red);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .avoid-item::before { content: '✕  '; }
+
+  /* PARKING MODE */
+  .pm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .pm-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .pm-card h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .pm-card p { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  /* EFFORT GRID */
+  @media(max-width:640px) { .effort-grid { grid-template-columns: 1fr !important; } }
+
+  /* CALCULATOR */
+  .calc-tab {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .calc-tab:hover { color: var(--text); border-color: var(--orange); }
+  .calc-tab.active { background: var(--orange-soft); border-color: var(--orange); color: var(--orange); }
+
+  .calc-field { margin-bottom: 14px; }
+  .calc-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
+  .input-wrap {
+    display: flex; align-items: center;
+    background: #141820; border: 1px solid var(--border);
+    border-radius: 5px; overflow: hidden;
+  }
+  .input-wrap span {
+    padding: 8px 10px; font-size: 13px;
+    color: var(--muted); background: #0d1015;
+    border-right: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+  }
+  .input-wrap input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: var(--text); font-size: 14px; padding: 8px 12px;
+    font-family: 'DM Mono', monospace;
+  }
+  .input-wrap input:focus { background: rgba(244,112,46,0.04); }
+
+  .result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid rgba(37,42,53,0.5);
+    font-size: 13px;
+  }
+  .result-row span:first-child { color: var(--muted); }
+  .result-val { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); font-weight: 600; }
+  .result-green { color: var(--green) !important; }
+  .result-red { color: var(--red) !important; }
+  .result-gold { color: var(--gold) !important; }
+
+  .comp-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #141820; border: 1px solid var(--border);
+    border-radius: 4px; padding: 7px 10px; font-size: 12px;
+  }
+  .comp-item span:first-child { color: #b0b8cc; }
+  .comp-price { font-family: 'DM Mono', monospace; color: var(--gold); }
+
+  @media(max-width:640px) { .calc-inner { grid-template-columns: 1fr !important; } }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer span { font-size: 12px; color: var(--muted); }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .download-btn:hover { background: #d85e22; transform: translateY(-1px); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* SOURCING TWO-COL */
+  .source-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+  @media(max-width: 640px) { .source-grid { grid-template-columns: 1fr; } }
+  .source-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .source-card h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .source-card ul { list-style: none; }
+  .source-card ul li {
+    font-size: 13px;
+    color: #b0b8cc;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(37,42,53,0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .source-card ul li:last-child { border-bottom: none; }
+  .source-card ul li span { color: var(--muted); font-size: 11px; text-align: right; flex-shrink: 0; }
+
+  /* PAGE HEADING NAV */
+  .toc {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 16px 48px;
+    background: #0d1015;
+    border-bottom: 1px solid var(--border);
+  }
+  .toc a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 3px;
+    transition: color 0.15s, background 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+  .toc a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  /* PDF BUTTON */
+  .pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1f2e;
+    color: #e8eaf0;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    cursor: pointer;
+    border: 1px solid #353d52;
+  }
+  .pdf-btn:hover { background: #252c3f; transform: translateY(-1px); }
+
+  /* =====================
+     PRINT / PDF STYLES
+     ===================== */
+  @media print {
+    @page { margin: 18mm 16mm; size: A4; }
+
+    /* Reset to white/black */
+    *, *::before, *::after {
+      background: #fff !important;
+      color: #111 !important;
+      border-color: #ccc !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body { font-size: 11pt; line-height: 1.5; }
+
+    /* Hide interactive / screen-only elements */
+    nav.toc, .pdf-btn, #downloadBtn, footer .pdf-btn,
+    #calcTabs, .calc-field, .input-wrap,
+    .breakEvenNote, canvas { display: none !important; }
+
+    /* Hide the whole calculator section — too interactive for static PDF */
+    #calculator { display: none !important; }
+
+    /* Hero */
+    .hero { padding: 24px 0 20px; border-bottom: 2px solid #111; }
+    .hero h1 { font-size: 32pt; color: #111 !important; }
+    .hero h1 span { color: #c94a1a !important; }
+    .badge { background: #f5f5f5 !important; color: #333 !important; border-color: #bbb !important; }
+    .hero-verdict { background: #f9f9f9 !important; border-left-color: #c94a1a !important; color: #111 !important; }
+    .hero-verdict strong { color: #c94a1a !important; }
+
+    /* Section labels & titles */
+    .section-label { color: #c94a1a !important; }
+    .section-title { color: #111 !important; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+
+    /* KPI cards */
+    .kpi { border: 1px solid #ccc !important; border-radius: 4px; padding: 12px; }
+    .kpi::after { display: none; }
+    .kpi-value { color: #c94a1a !important; font-size: 26pt; }
+    .kpi-label { color: #555 !important; }
+    .kpi-sub { color: #777 !important; }
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+    /* Tables */
+    .table-wrap { border: 1px solid #ccc !important; }
+    th { background: #f0f0f0 !important; color: #333 !important; font-size: 9pt; }
+    td { font-size: 10pt; border-bottom: 1px solid #e8e8e8 !important; }
+    tr:hover td { background: #fff !important; }
+
+    /* Pills */
+    .pill { border: 1px solid #aaa !important; font-size: 9pt; }
+    .pill-green { color: #1a7a4a !important; background: #edfaf3 !important; }
+    .pill-red { color: #a02020 !important; background: #fdf0f0 !important; }
+    .pill-orange { color: #b03010 !important; background: #fef3ee !important; }
+    .pill-gold { color: #7a5a10 !important; background: #fffbe8 !important; }
+
+    /* Cards/blocks */
+    .napco-block { background: #fff8f8 !important; border-left-color: #c02020 !important; }
+    .napco-block h3 { color: #c02020 !important; }
+    .opportunity-block { background: #f0faf5 !important; border-left-color: #1a7a4a !important; }
+    .opportunity-block h3 { color: #1a7a4a !important; }
+    .source-card, .pm-card { border: 1px solid #ddd !important; }
+    .source-card h4 { color: #7a5a10 !important; }
+    .pm-card h4 { color: #1a4a8a !important; }
+
+    /* Timeline */
+    .tl-week { background: #fff3ee !important; color: #b03010 !important; border-color: #d06040 !important; font-size: 9pt; }
+    .tl-content { border: 1px solid #ddd !important; }
+    .tl-content strong { color: #111 !important; }
+    .tl-content span { color: #444 !important; }
+
+    /* Avoid list */
+    .avoid-item { color: #a02020 !important; background: #fff5f5 !important; border-color: #e0b0b0 !important; }
+
+    /* Margin tags */
+    .margin-high { color: #1a7a4a !important; }
+    .margin-mid { color: #7a5a10 !important; }
+    .margin-low { color: #666 !important; }
+    .price-tag { color: #7a5a10 !important; }
+
+    /* Chart cards — keep box, hide canvas */
+    .chart-card { border: 1px solid #ddd !important; }
+    .chart-wrap { display: none !important; }
+
+    /* Effort section */
+    .effort-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Page breaks */
+    .section { page-break-inside: avoid; }
+    hr.divider { border-top: 1px solid #ddd !important; margin: 24px 0; }
+
+    /* Footer */
+    footer { border-top: 1px solid #ccc !important; padding: 12px 0; }
+    footer span { color: #666 !important; }
+
+    /* Container padding */
+    .container { padding: 24px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">HomeFront Watch · Market Research · April 2026</div>
+  <h1>Car Camera<br><span>Opportunity</span></h1>
+  <p class="subtitle">A market overview and financial analysis for consideration</p>
+  <div class="hero-verdict">
+    The US dash cam market is a <strong>$1.3–1.7B category growing 8–15% per year</strong>, with only 16–30% household penetration. Amazon's Ring Car Cam was discontinued in 2024, leaving a notable gap. This report explores whether car cameras represent a viable product line extension for HomeFront Watch — including what we could charge, what we could make, and what the effort would look like. <strong>No decisions have been made.</strong> This is a research brief to inform that conversation.
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<nav class="toc">
+  <a href="#market">Market</a>
+  <a href="#napco">NAPCO / Prima</a>
+  <a href="#sourcing">Sourcing</a>
+  <a href="#products">Top Products</a>
+  <a href="#margins">Pricing & Margins</a>
+  <a href="#calculator">Calculator</a>
+  <a href="#parking">Parking Mode</a>
+  <a href="#effort">Effort & Risk</a>
+  <a href="#playbook">If We Proceed</a>
+</nav>
+
+<div class="container">
+
+  <!-- MARKET STATS -->
+  <div class="section" id="market">
+    <div class="section-label">01 — Market</div>
+    <div class="section-title">The Numbers Are Real</div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-value">$1.7B</div>
+        <div class="kpi-label">US Market Size (2024)</div>
+        <div class="kpi-sub">Doubling by 2030–31</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">15%</div>
+        <div class="kpi-label">Annual Growth Rate</div>
+        <div class="kpi-sub">North America (Mordor Intel.)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">~23%</div>
+        <div class="kpi-label">US Household Penetration</div>
+        <div class="kpi-sub">~75% of market untapped</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">40%</div>
+        <div class="kpi-label">Owners Captured a Crash</div>
+        <div class="kpi-sub">Insurance use case proven</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">2024</div>
+        <div class="kpi-label">Ring Car Cam Killed</div>
+        <div class="kpi-sub">Amazon exited. Gap is open.</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">US Market Growth ($B)</div>
+        <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Why Customers Buy</div>
+        <div class="chart-wrap"><canvas id="useCaseChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- NAPCO / PRIMA -->
+  <div class="section" id="napco">
+    <div class="section-label">02 — NAPCO / Prima</div>
+    <div class="section-title">Can We Use Our Existing System?</div>
+
+    <div class="napco-block">
+      <h3>⚠ Not Yet — Prima Is a Closed Ecosystem</h3>
+      <p>
+        NAPCO has <strong>zero automotive products</strong>. The Prima platform is locked — no API, no third-party camera integration, no RTSP stream support. We <strong>cannot</strong> promise customers their dash cam feeds into the Prima app. Any car camera we sell must run on its own app with its own subscription (or none).
+      </p>
+    </div>
+
+    <div class="opportunity-block">
+      <h3>✓ What Would Be Possible</h3>
+      <p>
+        Car cameras could be bundled at checkout alongside the alarm kit — same brand, same customer, separate apps. The PCAM outdoor camera already covers a parked-at-home driveway, which is a natural bridge story. If NAPCO ever opens its API, a unified backend becomes possible down the road.
+      </p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SOURCING -->
+  <div class="section" id="sourcing">
+    <div class="section-label">03 — Sourcing</div>
+    <div class="section-title">Where to Get the Cameras</div>
+
+    <p style="color: var(--muted); margin-bottom: 20px; font-size: 14px;">
+      <strong style="color: var(--red);">⚠ Important:</strong> Direct-from-China drop-ship is <strong style="color: var(--text);">no longer viable as of August 2025</strong> due to US tariff changes (40–50% duty stack). Any future program would require US-based inventory. Two paths available:
+    </p>
+
+    <div class="source-grid">
+      <div class="source-card">
+        <h4>🏁 Fastest Path — US Distributors</h4>
+        <ul>
+          <li><strong>The Dashcam Store Wholesale</strong> <span>BlackVue, Viofo, Thinkware, Vantrue — one account</span></li>
+          <li><strong>Petra Industries</strong> <span>Garmin, Cobra, Kenwood — $9.95 drop-ship</span></li>
+          <li><strong>Thinkware Dealer Program</strong> <span>No minimum order requirement</span></li>
+          <li><strong>DashCam Bros Wholesale</strong> <span>Multi-brand, reseller-friendly</span></li>
+          <li><strong>ADI Global / Snap One</strong> <span>Security channel — fits our lane</span></li>
+        </ul>
+      </div>
+      <div class="source-card">
+        <h4>💰 Higher Margin — Private Label</h4>
+        <ul>
+          <li><strong>Shenzhen Zhongxiang</strong> <span>MOQ 2 units · $22–55 · CE/FCC done</span></li>
+          <li><strong>AZDOME / Dongguan Lingdu</strong> <span>$35–90 · real retail brand</span></li>
+          <li><strong>Shenzhen Yunzhijia</strong> <span>$18–45 · lowest MOQ + price</span></li>
+          <li><strong>Shenzhen Gulong</strong> <span>$55–130 · premium Sony sensors</span></li>
+          <li><strong>V-Trust QC Inspection</strong> <span>~$268 before any bulk order</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TOP PRODUCTS -->
+  <div class="section" id="products">
+    <div class="section-label">04 — Products</div>
+    <div class="section-title">What We'd Actually Sell</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Retail Price</th>
+            <th>Channels</th>
+            <th>LTE / Cloud</th>
+            <th>Tier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>BlackVue DR970X-2CH LTE</strong></td>
+            <td class="price-tag">$549–649</td>
+            <td>4K + 1080p rear</td>
+            <td><span class="pill pill-green">Built-in LTE</span></td>
+            <td><span class="pill pill-gold">Flagship</span></td>
+          </tr>
+          <tr>
+            <td><strong>Nextbase iQ 4K</strong></td>
+            <td class="price-tag">$699</td>
+            <td>4K + 1440p cabin</td>
+            <td><span class="pill pill-green">Built-in LTE</span></td>
+            <td><span class="pill pill-gold">Flagship</span></td>
+          </tr>
+          <tr>
+            <td><strong>Thinkware U3000 2CH</strong></td>
+            <td class="price-tag">$499–549</td>
+            <td>4K + 2K rear</td>
+            <td><span class="pill pill-orange">Wi-Fi</span></td>
+            <td><span class="pill pill-gold">Premium</span></td>
+          </tr>
+          <tr>
+            <td><strong>Viofo A229 Pro 3CH</strong></td>
+            <td class="price-tag">$399</td>
+            <td>4K + 2K + 1080p cabin</td>
+            <td><span class="pill pill-orange">Wi-Fi</span></td>
+            <td><span class="pill pill-orange">Mid-Range</span></td>
+          </tr>
+          <tr>
+            <td><strong>Vantrue N4 Pro 3CH</strong></td>
+            <td class="price-tag">$379</td>
+            <td>4K + 1080p + 1080p</td>
+            <td><span class="pill pill-orange">Wi-Fi</span></td>
+            <td><span class="pill pill-orange">Mid-Range</span></td>
+          </tr>
+          <tr>
+            <td><strong>Garmin Dash Cam 67W</strong></td>
+            <td class="price-tag">$259</td>
+            <td>1440p wide</td>
+            <td><span class="pill pill-orange">Wi-Fi + Vault</span></td>
+            <td><span class="pill pill-orange">Mid-Range</span></td>
+          </tr>
+          <tr>
+            <td><strong>Rove R2-4K</strong></td>
+            <td class="price-tag">$89–109</td>
+            <td>4K front</td>
+            <td><span class="pill pill-red">None</span></td>
+            <td><span class="pill">Entry</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top: 12px; font-size: 12.5px; color: var(--muted);">💡 Bundle recommendation: sell any camera $300+ with a battery pack (Cellink NEO $299 or BlackVue B-130A $329). The accessory carries 40–50% margin — significantly better than the camera itself.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PRICING & MARGINS -->
+  <div class="section" id="margins">
+    <div class="section-label">05 — Pricing & Margins</div>
+    <div class="section-title">What We Make Per Sale</div>
+
+    <div class="chart-grid" style="margin-bottom: 24px;">
+      <div class="chart-card">
+        <div class="chart-title">Reseller Margin by Brand</div>
+        <div class="chart-wrap"><canvas id="marginChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">US Retail Price Tiers</div>
+        <div class="chart-wrap"><canvas id="priceChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand / Category</th>
+            <th>MAP Enforced?</th>
+            <th>Dealer Margin</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Accessories</strong> (batteries, hardwire)</td>
+            <td>Varies</td>
+            <td><span class="margin-tag margin-high">40–50%</span></td>
+            <td>The real money. Bundle with every order.</td>
+          </tr>
+          <tr>
+            <td><strong>BlackVue</strong></td>
+            <td><span class="pill pill-green">Strict</span></td>
+            <td><span class="margin-tag margin-high">20–30%</span></td>
+            <td>~$350 wholesale on a $499 unit</td>
+          </tr>
+          <tr>
+            <td><strong>Thinkware</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td><span class="margin-tag margin-high">20–30%</span></td>
+            <td>OBD cable included — good bundle value</td>
+          </tr>
+          <tr>
+            <td><strong>Nextbase</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td><span class="margin-tag margin-high">25–30%</span></td>
+            <td>+ LTE subscription rev-share</td>
+          </tr>
+          <tr>
+            <td><strong>Garmin</strong></td>
+            <td><span class="pill pill-green">Yes</span></td>
+            <td><span class="margin-tag margin-mid">20–25%</span></td>
+            <td>Lower margin, high brand trust</td>
+          </tr>
+          <tr>
+            <td><strong>Viofo</strong></td>
+            <td><span class="pill pill-orange">Partial</span></td>
+            <td><span class="margin-tag margin-mid">15–25%</span></td>
+            <td>Competes on Amazon directly</td>
+          </tr>
+          <tr>
+            <td><strong>Private Label (house brand)</strong></td>
+            <td>—</td>
+            <td><span class="margin-tag margin-high">50–70%</span></td>
+            <td>Best long-term margin; requires 3PL + QC</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PARKING MODE -->
+  <div class="section" id="parking">
+    <div class="section-label">06 — Key Feature</div>
+    <div class="section-title">Yes, They Record When the Car Is Off</div>
+
+    <p style="color: var(--muted); margin-bottom: 16px; font-size: 14px;">
+      This is called <strong style="color: var(--text);">Parking Mode</strong> — the camera stays awake on reserve power, watching for motion or impact. It's the single biggest selling point for security-focused buyers. Runtime: <strong style="color: var(--text);">6–18 hours</strong> on a hardwire kit; <strong style="color: var(--text);">24–40+ hours</strong> on a dedicated battery pack.
+    </p>
+
+    <div class="pm-grid">
+      <div class="pm-card">
+        <h4>Motion-Triggered</h4>
+        <p>Wakes on movement near the car. Saves a 30–60 sec clip. Most common mode. Good balance of storage and coverage.</p>
+      </div>
+      <div class="pm-card">
+        <h4>Impact-Only</h4>
+        <p>G-sensor fires on a hit or bump. Lowest battery drain. Best for long-term parking (travel, airport).</p>
+      </div>
+      <div class="pm-card">
+        <h4>Time-Lapse</h4>
+        <p>Records at 1–2 fps and compresses footage. Covers an entire day in a short clip. Good for busy urban lots.</p>
+      </div>
+      <div class="pm-card">
+        <h4>Radar Mode ⭐</h4>
+        <p>mmWave radar detects real approaching motion — no false triggers. Used by Thinkware U3000 and Nextbase iQ. Best for true security use.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PRICING CALCULATOR -->
+  <div class="section" id="calculator">
+    <div class="section-label">07 — Pricing Calculator</div>
+    <div class="section-title">What Could We Charge? What Would We Make?</div>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 24px;">Adjust any number below. All projections update in real time. Competitor prices shown for reference.</p>
+
+    <!-- PRODUCT SELECTOR TABS -->
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;" id="calcTabs">
+      <button class="calc-tab active" onclick="switchProduct(0)">Entry Cam</button>
+      <button class="calc-tab" onclick="switchProduct(1)">Mid-Range Cam</button>
+      <button class="calc-tab" onclick="switchProduct(2)">Premium Cam</button>
+      <button class="calc-tab" onclick="switchProduct(3)">Battery Pack</button>
+      <button class="calc-tab" onclick="switchProduct(4)">Hardwire Kit</button>
+    </div>
+
+    <!-- CALCULATOR CARD -->
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:10px; padding:28px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;" class="calc-inner">
+
+        <!-- LEFT: INPUTS -->
+        <div>
+          <p style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:16px;">Your Numbers</p>
+
+          <div class="calc-field">
+            <label>Our Cost (wholesale / unit)</label>
+            <div class="input-wrap"><span>$</span><input type="number" id="inCost" min="0" step="1" oninput="calcUpdate()"></div>
+          </div>
+          <div class="calc-field">
+            <label>Our Selling Price</label>
+            <div class="input-wrap"><span>$</span><input type="number" id="inPrice" min="0" step="1" oninput="calcUpdate()"></div>
+          </div>
+          <div class="calc-field">
+            <label>Units Sold / Month</label>
+            <div class="input-wrap"><span>#</span><input type="number" id="inUnits" min="1" step="1" oninput="calcUpdate()"></div>
+          </div>
+          <div class="calc-field">
+            <label>Shipping Cost / Unit</label>
+            <div class="input-wrap"><span>$</span><input type="number" id="inShip" min="0" step="0.5" oninput="calcUpdate()"></div>
+          </div>
+          <div class="calc-field">
+            <label>Returns / Refunds (%)</label>
+            <div class="input-wrap"><span>%</span><input type="number" id="inReturn" min="0" max="50" step="0.5" oninput="calcUpdate()"></div>
+          </div>
+
+          <!-- COMPETITOR COMPARISON -->
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <p style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:12px;">Competitor Prices (this tier)</p>
+            <div id="competitorPrices" style="display:flex; flex-direction:column; gap:6px;"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUTS -->
+        <div>
+          <p style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:16px;">Projected Results</p>
+
+          <div class="result-row">
+            <span>Gross Profit / Unit</span>
+            <span id="outGPU" class="result-val">—</span>
+          </div>
+          <div class="result-row">
+            <span>Margin %</span>
+            <span id="outMargin" class="result-val">—</span>
+          </div>
+          <div class="result-row">
+            <span>Monthly Revenue</span>
+            <span id="outRevMonth" class="result-val">—</span>
+          </div>
+          <div class="result-row">
+            <span>Monthly Gross Profit</span>
+            <span id="outGPMonth" class="result-val result-green">—</span>
+          </div>
+          <div class="result-row">
+            <span>Annual Revenue</span>
+            <span id="outRevYear" class="result-val">—</span>
+          </div>
+          <div class="result-row">
+            <span>Annual Gross Profit</span>
+            <span id="outGPYear" class="result-val result-green">—</span>
+          </div>
+          <div class="result-row" style="border-top:1px solid var(--border); padding-top:12px; margin-top:4px;">
+            <span>vs. Cheapest Competitor</span>
+            <span id="outVsLow" class="result-val">—</span>
+          </div>
+          <div class="result-row">
+            <span>vs. Average Competitor</span>
+            <span id="outVsAvg" class="result-val">—</span>
+          </div>
+
+          <!-- MARGIN GAUGE -->
+          <div style="margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:12px; color:var(--muted);">Margin Health</span>
+              <span id="outMarginLabel" style="font-size:12px; color:var(--muted);">—</span>
+            </div>
+            <div style="background:#1e2330; border-radius:4px; height:8px; overflow:hidden;">
+              <div id="marginBar" style="height:100%; width:0%; background:var(--green); border-radius:4px; transition:width 0.4s, background 0.4s;"></div>
+            </div>
+          </div>
+
+          <!-- BREAK-EVEN NOTE -->
+          <div id="breakEvenNote" style="margin-top:16px; padding:12px 14px; border-radius:6px; font-size:13px; display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MULTI-PRODUCT SUMMARY -->
+    <div style="margin-top:20px;">
+      <p style="font-size:12px; color:var(--muted); margin-bottom:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em;">Combined Monthly Snapshot — All Products</p>
+      <div class="table-wrap">
+        <table id="summaryTable">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Our Price</th>
+              <th>Our Cost</th>
+              <th>Units/Mo</th>
+              <th>Margin %</th>
+              <th>Monthly GP</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+          <tfoot>
+            <tr style="background:#141820;">
+              <td colspan="3" style="font-weight:600; color:var(--text); font-size:13px;">TOTAL</td>
+              <td id="sumUnits" style="font-weight:600; color:var(--text); font-size:13px;"></td>
+              <td id="sumMarginAvg" style="font-weight:600; color:var(--gold); font-size:13px;"></td>
+              <td id="sumGP" style="font-weight:700; color:var(--green); font-size:14px;"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- EFFORT & RISK -->
+  <div class="section" id="effort">
+    <div class="section-label">08 — Effort & Risk</div>
+    <div class="section-title">What It Would Actually Take</div>
+
+    <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Adding a car camera line is not a small lift. This is a realistic view of what's involved before a decision is made.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;" class="effort-grid">
+
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px;">
+        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); margin-bottom:14px;">What's Required</p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--orange); margin-top:2px;">→</span><span><strong style="color:var(--text);">3+ new supplier accounts</strong> — Thinkware, Dashcam Store Wholesale, Petra Industries. Each requires business license + resale cert.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--orange); margin-top:2px;">→</span><span><strong style="color:var(--text);">US 3PL setup</strong> — Red Stag, ShipBob, or ShipMonk. ~$250–275/mo base + per-order fees. Required since China drop-ship is no longer viable.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--orange); margin-top:2px;">→</span><span><strong style="color:var(--text);">New product content</strong> — Product pages, demo videos, install guides, comparison charts. Different audience than alarm kits.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--orange); margin-top:2px;">→</span><span><strong style="color:var(--text);">Separate app ecosystem</strong> — No Prima integration. Customers need a different app per brand (BlackVue, Thinkware, Nextbase, etc.).</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--orange); margin-top:2px;">→</span><span><strong style="color:var(--text);">Customer support expansion</strong> — Hardware returns run 5–12% on electronics. Need clear process for refunds and replacements.</span></li>
+        </ul>
+      </div>
+
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px;">
+        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--red); margin-bottom:14px;">Risks to Consider</p>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--red); margin-top:2px;">⚠</span><span><strong style="color:var(--text);">Brand split</strong> — Two product lines = two stories. Marketing focus gets divided at launch.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--red); margin-top:2px;">⚠</span><span><strong style="color:var(--text);">Amazon price competition</strong> — Budget and mid-range cameras are commoditized on Amazon. Margins shrink fast without a differentiated story.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--red); margin-top:2px;">⚠</span><span><strong style="color:var(--text);">Ring's cautionary tale</strong> — Amazon had full resources and still exited after 13 months. Positioning matters more than the product.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--red); margin-top:2px;">⚠</span><span><strong style="color:var(--text);">Tariff volatility</strong> — Current 40–50% China duty stack could shift again. Private-label economics are sensitive to trade policy.</span></li>
+          <li style="font-size:13px; color:#b0b8cc; display:flex; gap:10px; align-items:flex-start;"><span style="color:var(--red); margin-top:2px;">⚠</span><span><strong style="color:var(--text);">Team bandwidth</strong> — Launching a parallel product line requires parallel execution. Worth evaluating against current capacity before committing.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- EFFORT COMPARISON -->
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:8px; padding:20px;">
+      <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:16px;">Effort Estimate to Launch</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--orange);">6–8</div>
+          <div style="font-size:12px; color:var(--muted);">Weeks to first SKU live</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--orange);">3–5</div>
+          <div style="font-size:12px; color:var(--muted);">New vendor relationships</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--orange);">$3–10k</div>
+          <div style="font-size:12px; color:var(--muted);">Startup inventory (private label)</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--orange);">$250+</div>
+          <div style="font-size:12px; color:var(--muted);">Monthly 3PL base cost</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--gold);">40–50%</div>
+          <div style="font-size:12px; color:var(--muted);">Best margin (accessories)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PLAYBOOK (NEUTRAL) -->
+  <div class="section" id="playbook">
+    <div class="section-label">09 — If We Proceed</div>
+    <div class="section-title">A Possible Launch Path</div>
+    <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">If the team decides to move forward, here is a logical sequence. Timing and priority relative to the alarm product line would be determined by leadership.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-week">Phase 1</div>
+        <div class="tl-content">
+          <strong>Establish US supplier accounts</strong>
+          <span>Thinkware dealer (no minimum), The Dashcam Store Wholesale (multi-brand), Petra Industries (Cobra + Garmin drop-ship at $9.95). Result: 15–20 US-stocked SKUs at 20–30% margin within weeks.</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Phase 2</div>
+        <div class="tl-content">
+          <strong>Private-label pilot (optional, higher margin)</strong>
+          <span>50–100 units from Shenzhen Zhongxiang or AZDOME. Budget: $3–10k + $268 V-Trust QC inspection + US 3PL setup. Potential: 50–70% gross margin on a branded HomeFront Watch cam.</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-week">Phase 3</div>
+        <div class="tl-content">
+          <strong>Marketing — "Home Security for Your Car"</strong>
+          <span>Bundle battery pack with every $300+ camera (40–50% margin accessory). Target: rideshare drivers, Kia/Hyundai owners, new homeowners. The Ring Car Cam's exit in 2024 left this positioning wide open.</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--muted); margin-top: 16px; margin-bottom: 12px;">Products / paths to avoid regardless of timing:</p>
+    <div class="avoid-list">
+      <div class="avoid-item">Ring Car Cam (discontinued)</div>
+      <div class="avoid-item">Owlcam (fleet-only)</div>
+      <div class="avoid-item">Anker Roav (sunsetted)</div>
+      <div class="avoid-item">China direct drop-ship (tariff dead)</div>
+      <div class="avoid-item">Claiming Prima integration (not supported)</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>HomeFront Watch · Obsidian Federal LLC · April 2026 · <span style="color:var(--orange);font-family:'DM Mono',monospace;">v1.0</span></span>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+    <button class="pdf-btn" onclick="window.print()">
+      🖨 Save as PDF
+    </button>
+    <button class="download-btn" onclick="window.open('Car-Cameras-Go-to-Market Playbook.pdf', '_blank')">
+      ↓ Download Full Report
+    </button>
+  </div>
+</footer>
+
+<script>
+// --- CHART: Market Growth ---
+new Chart(document.getElementById('growthChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2022','2023','2024','2025E','2026E','2028E','2030E'],
+    datasets: [{
+      label: 'US Market ($B)',
+      data: [0.85, 1.05, 1.35, 1.55, 1.78, 2.35, 3.10],
+      backgroundColor: (ctx) => {
+        const i = ctx.dataIndex;
+        return i <= 2 ? 'rgba(244,112,46,0.7)' : 'rgba(244,112,46,0.3)';
+      },
+      borderColor: 'rgba(244,112,46,0.9)',
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#7a8299', font: { size: 11 } }, grid: { color: '#1e2330' } },
+      y: { ticks: { color: '#7a8299', font: { size: 11 }, callback: v => '$'+v+'B' }, grid: { color: '#1e2330' } }
+    }
+  }
+});
+
+// --- CHART: Use Cases ---
+new Chart(document.getElementById('useCaseChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Insurance / Accidents', 'Theft / Vandalism', 'Hit & Run', 'Rideshare', 'Family / Teen', 'Other'],
+    datasets: [{
+      data: [36, 22, 18, 10, 8, 6],
+      backgroundColor: ['#f4702e','#c9a84c','#4a9eff','#3ecf8e','#9b8afb','#404860'],
+      borderColor: '#181c24',
+      borderWidth: 3,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { color: '#7a8299', font: { size: 10.5 }, padding: 12, boxWidth: 12 }
+      }
+    }
+  }
+});
+
+// --- CHART: Margins ---
+new Chart(document.getElementById('marginChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Accessories','Private Label','BlackVue','Nextbase','Thinkware','Garmin','Viofo'],
+    datasets: [{
+      label: 'Margin %',
+      data: [45, 60, 25, 27.5, 25, 22.5, 20],
+      backgroundColor: [
+        'rgba(62,207,142,0.8)','rgba(62,207,142,0.8)',
+        'rgba(244,112,46,0.7)','rgba(244,112,46,0.7)','rgba(244,112,46,0.7)',
+        'rgba(74,158,255,0.6)','rgba(74,158,255,0.6)'
+      ],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        ticks: { color: '#7a8299', font: { size: 11 }, callback: v => v+'%' },
+        grid: { color: '#1e2330' }, max: 80
+      },
+      y: { ticks: { color: '#b0b8cc', font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// --- CHART: Price Tiers ---
+new Chart(document.getElementById('priceChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Entry\n<$100', 'Mid\n$100–300', 'Premium\n$300–600', 'Flagship\n$600+'],
+    datasets: [{
+      label: 'Approx # of Models',
+      data: [15, 28, 22, 8],
+      backgroundColor: ['rgba(74,158,255,0.6)','rgba(244,112,46,0.6)','rgba(62,207,142,0.6)','rgba(201,168,76,0.7)'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#7a8299', font: { size: 10 } }, grid: { color: '#1e2330' } },
+      y: { ticks: { color: '#7a8299', font: { size: 11 } }, grid: { color: '#1e2330' } }
+    }
+  }
+});
+
+// Download button — triggers markdown download
+// =============================================
+// PRICING CALCULATOR
+// =============================================
+const PRODUCTS = [
+  {
+    name: 'Entry Cam',
+    defaultCost: 45, defaultPrice: 89, defaultUnits: 10, defaultShip: 9.95, defaultReturn: 8,
+    competitors: [
+      { name: 'Rove R2-4K (Amazon)', price: 89 },
+      { name: 'Rexing V1-4K', price: 99 },
+      { name: 'Viofo A119 Mini 2', price: 109 },
+      { name: 'Redtiger F7N', price: 99 },
+    ]
+  },
+  {
+    name: 'Mid-Range Cam',
+    defaultCost: 120, defaultPrice: 199, defaultUnits: 8, defaultShip: 9.95, defaultReturn: 7,
+    competitors: [
+      { name: 'Garmin Dash Cam Mini 2', price: 130 },
+      { name: 'Vantrue N2 Pro', price: 170 },
+      { name: 'Garmin Dash Cam 57', price: 230 },
+      { name: 'Viofo A229 Plus', price: 259 },
+      { name: 'Thinkware Q1000 2CH', price: 279 },
+    ]
+  },
+  {
+    name: 'Premium Cam',
+    defaultCost: 240, defaultPrice: 399, defaultUnits: 5, defaultShip: 9.95, defaultReturn: 6,
+    competitors: [
+      { name: 'Viofo A229 Pro 2CH', price: 329 },
+      { name: 'Vantrue N4 Pro 3CH', price: 380 },
+      { name: 'Viofo A229 Pro 3CH', price: 399 },
+      { name: 'Thinkware U3000 2CH', price: 499 },
+      { name: 'BlackVue DR970X 2CH', price: 549 },
+    ]
+  },
+  {
+    name: 'Battery Pack',
+    defaultCost: 149, defaultPrice: 249, defaultUnits: 12, defaultShip: 7.95, defaultReturn: 4,
+    competitors: [
+      { name: 'Cellink NEO 5', price: 249 },
+      { name: 'Cellink NEO 8', price: 299 },
+      { name: 'BlackVue B-130A', price: 329 },
+      { name: 'Blackboxmycar PowerCell 8', price: 259 },
+    ]
+  },
+  {
+    name: 'Hardwire Kit',
+    defaultCost: 12, defaultPrice: 29, defaultUnits: 15, defaultShip: 4.95, defaultReturn: 3,
+    competitors: [
+      { name: 'Viofo HK3 Hardwire Kit', price: 20 },
+      { name: 'BlackVue Power Magic Pro', price: 35 },
+      { name: 'Thinkware OBD-II Cable', price: 40 },
+      { name: 'Garmin Parking Cable', price: 60 },
+    ]
+  }
+];
+
+// Per-product saved state
+const productState = PRODUCTS.map(p => ({
+  cost: p.defaultCost,
+  price: p.defaultPrice,
+  units: p.defaultUnits,
+  ship: p.defaultShip,
+  ret: p.defaultReturn
+}));
+
+let currentProduct = 0;
+
+function switchProduct(idx) {
+  // save current inputs
+  saveCurrentState();
+  currentProduct = idx;
+  loadProduct(idx);
+  document.querySelectorAll('.calc-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+}
+
+function saveCurrentState() {
+  const s = productState[currentProduct];
+  s.cost = parseFloat(document.getElementById('inCost').value) || 0;
+  s.price = parseFloat(document.getElementById('inPrice').value) || 0;
+  s.units = parseInt(document.getElementById('inUnits').value) || 1;
+  s.ship = parseFloat(document.getElementById('inShip').value) || 0;
+  s.ret = parseFloat(document.getElementById('inReturn').value) || 0;
+}
+
+function loadProduct(idx) {
+  const s = productState[idx];
+  const p = PRODUCTS[idx];
+  document.getElementById('inCost').value = s.cost;
+  document.getElementById('inPrice').value = s.price;
+  document.getElementById('inUnits').value = s.units;
+  document.getElementById('inShip').value = s.ship;
+  document.getElementById('inReturn').value = s.ret;
+
+  // Render competitors
+  const container = document.getElementById('competitorPrices');
+  container.innerHTML = p.competitors.map(c => `
+    <div class="comp-item">
+      <span>${c.name}</span>
+      <span class="comp-price">$${c.price}</span>
+    </div>
+  `).join('');
+
+  calcUpdate();
+}
+
+function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+function fmtPct(n) { return n.toFixed(1) + '%'; }
+
+function calcUpdate() {
+  saveCurrentState();
+  const s = productState[currentProduct];
+  const cost = s.cost;
+  const price = s.price;
+  const units = s.units;
+  const ship = s.ship;
+  const retPct = s.ret / 100;
+
+  const effectiveUnits = units * (1 - retPct);
+  const totalCost = (cost + ship) * units; // pay cost + ship for all ordered
+  const totalRev = price * effectiveUnits;
+  const gp = totalRev - totalCost;
+  const gpPerUnit = price - cost - ship;
+  const margin = price > 0 ? ((price - cost - ship) / price) * 100 : 0;
+
+  const gpMonth = gp;
+  const revMonth = totalRev;
+  const gpYear = gp * 12;
+  const revYear = revMonth * 12;
+
+  // competitor comparisons
+  const comps = PRODUCTS[currentProduct].competitors.map(c => c.price);
+  const compMin = Math.min(...comps);
+  const compAvg = comps.reduce((a,b)=>a+b,0)/comps.length;
+  const vLow = price - compMin;
+  const vAvg = price - compAvg;
+
+  // Update DOM
+  document.getElementById('outGPU').textContent = fmt(gpPerUnit);
+  document.getElementById('outGPU').className = 'result-val ' + (gpPerUnit >= 0 ? 'result-green' : 'result-red');
+  document.getElementById('outMargin').textContent = fmtPct(Math.max(0, margin));
+  document.getElementById('outMargin').className = 'result-val ' + (margin >= 30 ? 'result-green' : margin >= 15 ? 'result-gold' : 'result-red');
+  document.getElementById('outRevMonth').textContent = fmt(revMonth);
+  document.getElementById('outGPMonth').textContent = fmt(gpMonth);
+  document.getElementById('outGPMonth').className = 'result-val ' + (gpMonth >= 0 ? 'result-green' : 'result-red');
+  document.getElementById('outRevYear').textContent = fmt(revYear);
+  document.getElementById('outGPYear').textContent = fmt(gpYear);
+  document.getElementById('outGPYear').className = 'result-val ' + (gpYear >= 0 ? 'result-green' : 'result-red');
+
+  // vs competitor
+  const vsLowEl = document.getElementById('outVsLow');
+  vsLowEl.textContent = (vLow >= 0 ? '+' : '') + fmt(vLow) + ' vs $' + compMin;
+  vsLowEl.className = 'result-val ' + (vLow <= 0 ? 'result-green' : 'result-gold');
+
+  const vsAvgEl = document.getElementById('outVsAvg');
+  vsAvgEl.textContent = (vAvg >= 0 ? '+' : '') + fmt(Math.abs(vAvg)) + (vAvg >= 0 ? ' above' : ' below') + ' avg';
+  vsAvgEl.className = 'result-val ' + (vAvg <= 10 ? 'result-green' : 'result-gold');
+
+  // Margin bar
+  const barPct = Math.min(100, Math.max(0, margin));
+  const barEl = document.getElementById('marginBar');
+  barEl.style.width = barPct + '%';
+  barEl.style.background = margin >= 35 ? '#3ecf8e' : margin >= 20 ? '#c9a84c' : '#f25555';
+  document.getElementById('outMarginLabel').textContent =
+    margin >= 40 ? '🟢 Strong' : margin >= 25 ? '🟡 Healthy' : margin >= 10 ? '🟠 Thin' : '🔴 Loss Risk';
+
+  // Break-even note
+  const beNote = document.getElementById('breakEvenNote');
+  if (gpPerUnit <= 0) {
+    beNote.style.display = 'block';
+    beNote.style.background = 'rgba(242,85,85,0.08)';
+    beNote.style.border = '1px solid rgba(242,85,85,0.25)';
+    beNote.style.color = '#f25555';
+    const breakEvenPrice = cost + ship;
+    beNote.innerHTML = `⚠ At this price you're losing money. Minimum break-even price: <strong>${fmt(Math.ceil(breakEvenPrice))}</strong>`;
+  } else {
+    beNote.style.display = 'none';
+  }
+
+  updateSummary();
+}
+
+function updateSummary() {
+  saveCurrentState();
+  const tbody = document.getElementById('summaryBody');
+  let rows = '';
+  let totalUnits = 0, totalGP = 0, totalRevForAvg = 0;
+
+  PRODUCTS.forEach((p, i) => {
+    const s = productState[i];
+    const effectiveUnits = s.units * (1 - s.ret / 100);
+    const totalCost = (s.cost + s.ship) * s.units;
+    const totalRev = s.price * effectiveUnits;
+    const gp = totalRev - totalCost;
+    const margin = s.price > 0 ? ((s.price - s.cost - s.ship) / s.price) * 100 : 0;
+
+    totalUnits += s.units;
+    totalGP += gp;
+    totalRevForAvg += totalRev;
+
+    const gpClass = gp >= 0 ? 'margin-high' : 'margin-low';
+    const mClass = margin >= 30 ? 'margin-high' : margin >= 15 ? 'margin-mid' : 'margin-low';
+    const activeStyle = i === currentProduct ? 'background:rgba(244,112,46,0.05);' : '';
+    rows += `<tr style="${activeStyle}">
+      <td><strong>${p.name}</strong>${i === currentProduct ? ' <span style="font-size:10px;color:var(--orange);">← editing</span>' : ''}</td>
+      <td class="price-tag">$${s.price}</td>
+      <td class="price-tag" style="color:var(--muted);">$${s.cost}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:13px;">${s.units}</td>
+      <td><span class="margin-tag ${mClass}">${fmtPct(Math.max(0,margin))}</span></td>
+      <td><span class="margin-tag ${gpClass}">${fmt(gp)}</span></td>
+    </tr>`;
+  });
+
+  tbody.innerHTML = rows;
+  const avgMargin = totalRevForAvg > 0 ? ((totalGP / totalRevForAvg) * 100) : 0;
+  document.getElementById('sumUnits').textContent = totalUnits;
+  document.getElementById('sumMarginAvg').textContent = fmtPct(Math.max(0, avgMargin)) + ' avg';
+  document.getElementById('sumGP').textContent = fmt(totalGP) + '/mo';
+}
+
+// Init
+loadProduct(0);
+
+</script>
+</body>
+</html>
