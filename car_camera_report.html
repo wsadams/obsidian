@@ -21,15 +21,103 @@
     --text: #e8eaf0;
     --muted: #7a8299;
     --accent: #4a9eff;
+    --fs: 15px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: var(--black);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
+    font-size: var(--fs);
     line-height: 1.6;
   }
+
+  /* SETTINGS PANEL */
+  #settings-toggle {
+    position: fixed;
+    top: 16px; right: 16px;
+    z-index: 1000;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 18px;
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  #settings-toggle:hover { border-color: var(--orange); color: var(--orange); }
+
+  #settings-panel {
+    position: fixed;
+    top: 62px; right: 16px;
+    z-index: 999;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    width: 240px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none;
+  }
+  #settings-panel.open { display: block; }
+  #settings-panel h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .setting-row label {
+    font-size: 13px;
+    color: var(--text);
+  }
+  .size-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .size-btn {
+    background: #1e2330;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .size-btn:hover { border-color: var(--orange); color: var(--orange); }
+  #fs-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--orange);
+    min-width: 36px;
+    text-align: center;
+  }
+  .setting-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+  .reset-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 7px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--orange); color: var(--orange); }
 
   /* HERO */
   .hero {
@@ -180,7 +268,7 @@
   th {
     background: #141820;
     color: var(--muted);
-    font-size: 11px;
+    font-size: calc(var(--fs) - 4px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -191,7 +279,7 @@
   td {
     padding: 12px 16px;
     border-bottom: 1px solid rgba(37,42,53,0.6);
-    font-size: 13.5px;
+    font-size: calc(var(--fs) - 1px);
     vertical-align: middle;
   }
   tr:last-child td { border-bottom: none; }
@@ -605,6 +693,30 @@
 </style>
 </head>
 <body>
+
+<!-- SETTINGS -->
+<button id="settings-toggle" onclick="toggleSettings()" title="Display Settings">⚙</button>
+<div id="settings-panel">
+  <h4>⚙ Display Settings</h4>
+  <div class="setting-row">
+    <label>Titles</label>
+    <div class="size-controls">
+      <button class="size-btn" onclick="changeTitle(-1)">−</button>
+      <span id="title-display">100%</span>
+      <button class="size-btn" onclick="changeTitle(1)">+</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <label>Body Text</label>
+    <div class="size-controls">
+      <button class="size-btn" onclick="changeBody(-1)">−</button>
+      <span id="fs-display">100%</span>
+      <button class="size-btn" onclick="changeBody(1)">+</button>
+    </div>
+  </div>
+  <hr class="setting-divider">
+  <button class="reset-btn" onclick="resetSettings()">Reset to Default</button>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -1157,7 +1269,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>HomeFront Watch · Obsidian Federal LLC · April 2026 · <span style="color:var(--orange);font-family:'DM Mono',monospace;">v1.0</span></span>
+  <span>HomeFront Watch · Obsidian Federal LLC · April 2026 · <span style="color:var(--orange);font-family:'DM Mono',monospace;">v1.1</span></span>
   <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
     <button class="pdf-btn" onclick="window.print()">
       🖨 Save as PDF
@@ -1496,6 +1608,72 @@ function updateSummary() {
 
 // Init
 loadProduct(0);
+
+// =============================================
+// SETTINGS PANEL — separate title + body scaling
+// =============================================
+const BODY_KEY  = 'hfw_car_report_zoom';
+const TITLE_KEY = 'hfw_car_report_title';
+const ZOOM_MIN = 0.7, ZOOM_MAX = 1.6, ZOOM_STEP = 0.05, ZOOM_DEFAULT = 1.0;
+
+function applyBody(zoom) {
+  zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom));
+  document.body.style.zoom = zoom;
+  document.getElementById('fs-display').textContent = Math.round(zoom * 100) + '%';
+  localStorage.setItem(BODY_KEY, zoom);
+}
+
+function applyTitle(scale) {
+  scale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale));
+  // Apply font-size scaling directly to title elements — no transform, no layout shift
+  const titleEls = document.querySelectorAll('.hero h1, .section-title, .napco-block h3, .opportunity-block h3, .chart-title');
+  titleEls.forEach(el => {
+    const base = parseFloat(el.getAttribute('data-base-fs'));
+    if (!base) {
+      // Store original computed font size on first run
+      const orig = parseFloat(window.getComputedStyle(el).fontSize);
+      el.setAttribute('data-base-fs', orig);
+      el.style.fontSize = (orig * scale) + 'px';
+    } else {
+      el.style.fontSize = (base * scale) + 'px';
+    }
+  });
+  document.getElementById('title-display').textContent = Math.round(scale * 100) + '%';
+  localStorage.setItem(TITLE_KEY, scale);
+}
+
+function changeBody(delta) {
+  const current = parseFloat(localStorage.getItem(BODY_KEY)) || ZOOM_DEFAULT;
+  applyBody(Math.round((current + delta * ZOOM_STEP) * 100) / 100);
+}
+
+function changeTitle(delta) {
+  const current = parseFloat(localStorage.getItem(TITLE_KEY)) || ZOOM_DEFAULT;
+  applyTitle(Math.round((current + delta * ZOOM_STEP) * 100) / 100);
+}
+
+function resetSettings() {
+  applyBody(ZOOM_DEFAULT);
+  applyTitle(ZOOM_DEFAULT);
+}
+
+function toggleSettings() {
+  document.getElementById('settings-panel').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('settings-panel');
+  const toggle = document.getElementById('settings-toggle');
+  if (!panel.contains(e.target) && !toggle.contains(e.target)) {
+    panel.classList.remove('open');
+  }
+});
+
+// Init — restore saved preferences
+(function() {
+  applyBody(parseFloat(localStorage.getItem(BODY_KEY)) || ZOOM_DEFAULT);
+  applyTitle(parseFloat(localStorage.getItem(TITLE_KEY)) || ZOOM_DEFAULT);
+})();
 
 </script>
 </body>
