@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!--
 ╔══════════════════════════════════════════════════════════════╗
-║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.22                    ║
+║   HOMEFRONT WATCH — PROJECT PLANNER  v2.1.4                    ║
 ║   Intelligent Surveillance Corp                              ║
 ║   Supabase Project: nhqytnaevtynbkgypidb                     ║
 ╠══════════════════════════════════════════════════════════════╣
@@ -250,7 +250,7 @@ td input[type=date].ci{color-scheme:dark;}
 
 /* ── KANBAN ─────────────────────────────────────────────────── */
 .kb-toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.kb-board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start;}
+.kb-board{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
 .kb-col{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
 .kb-col-hdr{padding:11px 13px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
 .kb-col-hdr:hover{background:rgba(255,255,255,.03);}
@@ -388,7 +388,7 @@ td input[type=date].ci{color-scheme:dark;}
   <div class="logo">
     <img id="logoImg" class="logo-img" src="" alt="logo">
     <div class="logo-text">
-      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.22</span></div>
+      <div class="logo-name" id="headerTitle">Homefront Watch <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.4</span></div>
       <div class="logo-sub" id="headerSubtitle">Intelligent Surveillance Corp — Project Planner</div>
     </div>
   </div>
@@ -445,8 +445,8 @@ td input[type=date].ci{color-scheme:dark;}
         <select class="fsel" id="filterPri" onchange="renderTable()">
           <option value="">All Priority</option><option>High</option><option>Medium</option><option>Low</option>
         </select>
+        <select class="fsel" id="filterTag" onchange="renderTable()"><option value="">All Tags</option></select>
         <button class="btn btn-ghost btn-sm" onclick="clearFilters()">✕ Clear</button>
-        <button class="btn btn-ghost btn-sm" id="sortToggle" onclick="toggleOrder()">⇅ Order</button>
         <button class="btn btn-ghost btn-sm" onclick="openPrintView()">🖨 Print</button>
       </div>
       <div class="tbl-wrap">
@@ -585,7 +585,7 @@ td input[type=date].ci{color-scheme:dark;}
       <!-- Tags -->
       <div class="settings-section">
         <h3>Task Tags</h3>
-        <p style="font-size:12px;color:var(--mid);margin-bottom:10px">Tags created from tasks. Click a tag to rename it, or ✕ to remove it from the pool (does not remove it from existing tasks).</p>
+        <p style="font-size:12px;color:var(--mid);margin-bottom:10px">Tags created from tasks. Click a tag to rename it inline, or ✕ to remove it from the pool (does not remove it from existing tasks).</p>
         <div class="tag-list" id="settingsTagList"></div>
         <div class="s-add"><input type="text" id="newTagInput" placeholder="#new-tag"><button class="btn btn-gold btn-sm" onclick="addTagFromSettings()">Add</button></div>
       </div>
@@ -593,7 +593,7 @@ td input[type=date].ci{color-scheme:dark;}
       <!-- Note Tags -->
       <div class="settings-section">
         <h3>Note Tags</h3>
-        <p style="font-size:12px;color:var(--mid);margin-bottom:10px">Tags used across all notes. Click a tag to rename it globally, or ✕ to remove it from all notes.</p>
+        <p style="font-size:12px;color:var(--mid);margin-bottom:10px">Tags used across all notes. Click a tag to rename it inline globally, or ✕ to remove it from all notes.</p>
         <div class="tag-list" id="settingsNoteTagList"></div>
         <div class="s-add"><input type="text" id="newNoteTagInput" placeholder="#new-note-tag"><button class="btn btn-gold btn-sm" onclick="addNoteTagFromSettings()">Add</button></div>
       </div>
@@ -900,7 +900,7 @@ let people=["Dad","Shaun","Tia","Jada","Jeremiah","Mom"];
 let allTags=[];
 let notes=[];
 let appTitle='Homefront Watch', appSubtitle='Intelligent Surveillance Corp — Project Planner';
-let appVersion='v2.1.22', logoUrl='';
+let appVersion='v2.1.4', logoUrl='';
 
 let currentTab='__all__', currentPage='planner', currentView='table';
 let currentUser=localStorage.getItem('hw_user')||'';
@@ -1449,9 +1449,10 @@ function buildFilters(){
   fo.innerHTML='<option value="">All Owners</option>';
   people.forEach(p=>fo.innerHTML+=`<option${p===curO?' selected':''}>${p}</option>`);
   if(currentTab!=='__all__'&&fp)fp.value=currentTab;
+  const ft=document.getElementById('filterTag');if(ft){const curT=ft.value;const allTags=[...new Set(tasks.flatMap(t=>Array.isArray(t.tags)?t.tags:[]).filter(Boolean))].sort();ft.innerHTML='<option value="">All Tags</option>'+allTags.map(t=>`<option${t===curT?' selected':''}>${t}</option>`).join('');}
 }
 function clearFilters(){
-  ['searchInput','filterOwner','filterStatus','filterPri'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['searchInput','filterOwner','filterStatus','filterPri','filterTag'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('filterPhase').value=currentTab!=='__all__'?currentTab:'';
   renderTable();
 }
@@ -1465,6 +1466,7 @@ function getVisible(){
   const fo=document.getElementById('filterOwner').value;
   const fs=document.getElementById('filterStatus').value;
   const fpri=document.getElementById('filterPri').value;
+  const ftag=(document.getElementById('filterTag')||{}).value||'';
   return tasks.filter(t=>{
     if(t.parentId)return false;
     if(currentTab!=='__all__'&&t.phase!==currentTab)return false;
@@ -1472,6 +1474,7 @@ function getVisible(){
     if(fo&&!(Array.isArray(t.owner)?t.owner.includes(fo):t.owner===fo))return false;
     if(fs==='hide-complete' ? t.done : (fs && t.status!==fs))return false;
     if(fpri&&t.priority!==fpri)return false;
+    if(ftag&&!(Array.isArray(t.tags)?t.tags.includes(ftag):t.tags===ftag))return false;
     if(q){
       const hay=[t.task,t.category,t.phase,(t.owner||[]).join(' '),t.notes,(t.tags||[]).join(' ')].join(' ').toLowerCase();
       if(!hay.includes(q))return false;
@@ -1632,15 +1635,21 @@ function openInlineTagEditor(td,t){
   const el=document.createElement('input');el.className='ci';el.value=cur;
   el.setAttribute('placeholder','#tag1 #tag2');
   td.innerHTML='';td.appendChild(el);el.focus();
+  el.addEventListener('input',()=>showTagSuggest(el));
+  el.addEventListener('keydown',e=>{
+    tagSuggestKeyNav(e,el);
+    if(e.key==='Enter'&&_tagSuggestIdx<0){e.preventDefault();save();}
+    if(e.key==='Escape'){hideTagSuggest();renderTable();}
+  });
   const save=()=>{
+    hideTagSuggest();
     snapshot('Edit tags');
     const newTags=el.value.split(/\s+/).map(s=>s.trim().replace(/^#+/,'#').replace(/^([^#])/,'#$1')).filter(Boolean);
     t.tags=newTags;
     newTags.forEach(tag=>{if(!allTags.includes(tag))allTags.push(tag);});
     saveTaskToSb(t);saveSettingsToSb();renderTable();toast('✓ Tags updated');
   };
-  el.addEventListener('blur',save);
-  el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}if(e.key==='Escape')renderTable();});
+  el.addEventListener('blur',()=>setTimeout(save,160));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1732,8 +1741,10 @@ document.addEventListener('click',e=>{
 // ══════════════════════════════════════════════════════════════
 //  TAG AUTOCOMPLETE
 // ══════════════════════════════════════════════════════════════
+let _tagSuggestTarget=null;
 function showTagSuggest(inp){
   hideTagSuggest();
+  _tagSuggestTarget=inp;
   const val=inp.value.split(/\s+/).pop().replace(/^#/,'').toLowerCase();
   if(!val)return;
   const matches=allTags.filter(t=>t.toLowerCase().replace(/^#/,'').startsWith(val));
@@ -1745,9 +1756,9 @@ function showTagSuggest(inp){
   drop.innerHTML=matches.slice(0,8).map(m=>`<div class="tag-suggest-item" onmousedown="pickTagSuggest('${esc(m)}')">${esc(m)}</div>`).join('');
   drop.style.display='block';
 }
-function hideTagSuggest(){const d=document.getElementById('tagSuggestDrop');if(d){d.style.display='none';d.innerHTML='';}_tagSuggestIdx=-1;}
+function hideTagSuggest(){const d=document.getElementById('tagSuggestDrop');if(d){d.style.display='none';d.innerHTML='';}_tagSuggestIdx=-1;_tagSuggestTarget=null;}
 function pickTagSuggest(tag){
-  const inp=document.getElementById('fTags');if(!inp)return;
+  const inp=_tagSuggestTarget||document.getElementById('fTags');if(!inp)return;
   const parts=inp.value.split(/\s+/);parts.pop();
   inp.value=(parts.length?parts.join(' ')+' ':'')+tag+' ';
   hideTagSuggest();inp.focus();
@@ -2244,21 +2255,29 @@ function renderSList(containerId,arr,type){
 }
 function renderSettingsTags(){
   const tl=document.getElementById('settingsTagList');if(!tl)return;
+  if(!allTags.length){tl.innerHTML=`<span style="font-size:12px;color:var(--mid)">No tags yet.</span>`;return;}
   tl.innerHTML=allTags.map((t,i)=>`
-    <span class="tag-chip" style="cursor:default;display:inline-flex;align-items:center;gap:4px">
-      <span style="cursor:pointer" title="Click to rename" onclick="renameTaskTag(${i})">${esc(t)}</span>
+    <span class="tag-chip" id="stag-${i}" style="cursor:default;display:inline-flex;align-items:center;gap:4px">
+      <span style="cursor:pointer" title="Click to rename" onclick="inlineEditTag(${i})">${esc(t)}</span>
       <span style="cursor:pointer;opacity:.5" onclick="removeTag(${i})" title="Remove">✕</span>
     </span>`).join('');
 }
-function renameTaskTag(idx){
+function inlineEditTag(idx){
+  const chip=document.getElementById('stag-'+idx);if(!chip)return;
   const old=allTags[idx];
-  const val=prompt(`Rename tag "${old}" to:`,old);
-  if(!val||!val.trim()||val.trim()===old)return;
-  const newTag=val.trim().replace(/^([^#])/,'#$1');
-  if(allTags.includes(newTag)){toast('Tag already exists');return;}
-  allTags[idx]=newTag;
-  tasks.forEach(t=>{if((t.tags||[]).includes(old)){t.tags=t.tags.map(tg=>tg===old?newTag:tg);saveTaskToSb(t);}});
-  renderSettingsTags();saveSettingsToSb();renderTable();toast(`✓ Renamed "${old}" → "${newTag}"`);
+  const inp=document.createElement('input');
+  inp.value=old;inp.style.cssText='width:100px;padding:2px 6px;background:var(--acc3);border:1.5px solid var(--acc);border-radius:5px;color:#fff;font-family:DM Sans,sans-serif;font-size:12px;outline:none;';
+  chip.innerHTML='';chip.appendChild(inp);inp.focus();inp.select();
+  const commit=()=>{
+    const v=inp.value.trim().replace(/^([^#])/,'#$1');
+    if(!v||v===old){renderSettingsTags();return;}
+    if(allTags.includes(v)&&v!==old){toast('Tag already exists');renderSettingsTags();return;}
+    allTags[idx]=v;
+    tasks.forEach(t=>{if((t.tags||[]).includes(old)){t.tags=t.tags.map(tg=>tg===old?v:tg);saveTaskToSb(t);}});
+    renderSettingsTags();saveSettingsToSb();buildFilters();renderTable();toast(`✓ Renamed "${old}" → "${v}"`);
+  };
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit();}if(e.key==='Escape'){renderSettingsTags();}});
 }
 function renameSettingItem(type,idx,newVal){
   if(!newVal)return;
@@ -2309,26 +2328,27 @@ function renderSettingsNoteTags(){
   const tl=document.getElementById('settingsNoteTagList');if(!tl)return;
   const noteTags=getAllNoteTags();
   if(!noteTags.length){tl.innerHTML=`<span style="font-size:12px;color:var(--mid)">No note tags yet.</span>`;return;}
-  tl.innerHTML=noteTags.map(t=>`
-    <span class="tag-chip" style="cursor:default;display:inline-flex;align-items:center;gap:4px">
-      <span style="cursor:pointer" title="Click to rename globally" onclick="renameNoteTag('${esc(t)}')">${esc(t)}</span>
+  tl.innerHTML=noteTags.map((t,i)=>`
+    <span class="tag-chip" id="sntag-${i}" style="cursor:default;display:inline-flex;align-items:center;gap:4px">
+      <span style="cursor:pointer" title="Click to rename globally" onclick="inlineEditNoteTag(${i},'${esc(t)}')">${esc(t)}</span>
       <span style="cursor:pointer;opacity:.5" onclick="removeNoteTag('${esc(t)}')" title="Remove from all notes">✕</span>
     </span>`).join('');
 }
-async function renameNoteTag(old){
-  const val=prompt(`Rename note tag "${old}" to:`,old);
-  if(!val||!val.trim()||val.trim()===old)return;
-  const newTag=val.trim().replace(/^([^#])/,'#$1');
-  let changed=0;
-  for(const n of notes){
-    if((n.tags||[]).includes(old)){
-      n.tags=n.tags.map(t=>t===old?newTag:t);
-      await saveNoteToSb(n);
-      changed++;
-    }
-  }
-  renderSettingsNoteTags();renderNotesView();
-  toast(`✓ Renamed "${old}" → "${newTag}" on ${changed} note(s)`);
+async function inlineEditNoteTag(idx,old){
+  const chip=document.getElementById('sntag-'+idx);if(!chip)return;
+  const inp=document.createElement('input');
+  inp.value=old;inp.style.cssText='width:100px;padding:2px 6px;background:var(--acc3);border:1.5px solid var(--acc);border-radius:5px;color:#fff;font-family:DM Sans,sans-serif;font-size:12px;outline:none;';
+  chip.innerHTML='';chip.appendChild(inp);inp.focus();inp.select();
+  const commit=async()=>{
+    const v=inp.value.trim().replace(/^([^#])/,'#$1');
+    if(!v||v===old){renderSettingsNoteTags();return;}
+    let changed=0;
+    for(const n of notes){if((n.tags||[]).includes(old)){n.tags=n.tags.map(t=>t===old?v:t);await saveNoteToSb(n);changed++;}}
+    renderSettingsNoteTags();renderNotesView();
+    toast(`✓ Renamed "${old}" → "${v}" on ${changed} note(s)`);
+  };
+  inp.addEventListener('blur',commit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit();}if(e.key==='Escape'){renderSettingsNoteTags();}});
 }
 async function removeNoteTag(tag){
   if(!confirm(`Remove tag "${tag}" from all notes?`))return;
@@ -2355,7 +2375,7 @@ function previewBranding(){
   const t=document.getElementById('setTitle').value||'Homefront Watch';
   const s=document.getElementById('setSubtitle').value||'';
   const logo=document.getElementById('setLogoUrl').value||'';
-  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.22</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(t)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.4</span>`;
   document.getElementById('headerSubtitle').textContent=s;
   const img=document.getElementById('logoImg');
   if(logo){img.src=logo;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -2363,7 +2383,7 @@ function previewBranding(){
 async function saveBranding(){
   appTitle=document.getElementById('setTitle').value.trim()||appTitle;
   appSubtitle=document.getElementById('setSubtitle').value.trim();
-  appVersion='v2.1.22';
+  appVersion='v2.1.4';
   logoUrl=document.getElementById('setLogoUrl').value.trim();
   defaultPhase=document.getElementById('setDefaultPhase')?.value||'Phase 1';
   // Save logo padding into localStorage so it persists
@@ -2389,7 +2409,7 @@ function previewLogoPadding(){
   document.documentElement.style.setProperty('--logo-pad-y', val+'px');
 }
 function applyBrandingToHeader(){
-  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.22</span>`;
+  document.getElementById('headerTitle').innerHTML=`${esc(appTitle)} <span style="font-size:11px;color:var(--mid);font-weight:400">v2.1.4</span>`;
   document.getElementById('headerSubtitle').textContent=appSubtitle;
   const img=document.getElementById('logoImg');
   if(logoUrl){img.src=logoUrl;img.classList.add('visible');}else{img.src='';img.classList.remove('visible');}
@@ -2581,7 +2601,7 @@ function doPrint(){
   });
   const win=window.open('','_blank','width=900,height=700');
   win.document.write(`<!DOCTYPE html><html><head><title>${appTitle} — Report</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1a2e;padding:28px;font-size:13px;}.report-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #C9A84C;}.report-title{font-size:20px;font-weight:700;color:#0F1E36;}.report-sub{font-size:11px;color:#888;margin-top:3px;}.report-meta{text-align:right;font-size:11px;color:#888;}.summary-bar{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;}.summary-pill{background:#f5f5f5;border-radius:7px;padding:7px 12px;font-size:11px;color:#555;}.summary-pill strong{display:block;font-size:18px;color:#0F1E36;font-weight:700;}table{width:100%;border-collapse:collapse;margin-bottom:8px;}thead th{background:#0F1E36;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;}tr.phase-hdr td{background:#1B3A6B;color:#C9A84C;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:2px;padding:8px 10px;}tbody tr td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}tbody tr.alt td{background:#fafafa;}tbody tr.done-row td{color:#bbb;text-decoration:line-through;}.footer{margin-top:20px;padding-top:10px;border-top:1px solid #eee;font-size:10px;color:#bbb;display:flex;justify-content:space-between;}@media print{body{padding:14px;}tr{page-break-inside:avoid;}}</style></head><body>
-  <div class="report-header"><div><div class="report-title">🏠 ${appTitle} — Project Report</div><div class="report-sub">Filter: ${filterDesc}</div></div><div class="report-meta">${today}<br><strong style="color:#0F1E36">${filtered.length} tasks</strong></div></div>
+  <div class="report-header"><div><div class="report-title">${appTitle} — Project Report</div><div class="report-sub">Filter: ${filterDesc}</div></div><div class="report-meta">${today}<br><strong style="color:#0F1E36">${filtered.length} tasks</strong></div></div>
   <div class="summary-bar"><div class="summary-pill"><strong>${filtered.filter(t=>t.done).length}</strong>Complete</div><div class="summary-pill"><strong>${filtered.filter(t=>t.status==='In Progress').length}</strong>In Progress</div><div class="summary-pill"><strong>${filtered.filter(t=>isOverdue(t.dueDate)&&!t.done).length}</strong>Overdue</div><div class="summary-pill"><strong>${filtered.length>0?Math.round(filtered.filter(t=>t.done).length/filtered.length*100):0}%</strong>Overall</div></div>
   <table><thead><tr><th>#</th><th>Task</th><th>Priority</th><th>Assignee(s)</th><th>Status</th><th>Due Date</th><th>%</th></tr></thead><tbody>${rows}</tbody></table>
   <div class="footer"><span>${appTitle} · ${appSubtitle}</span><span>Generated ${today} · File → Print → Save as PDF</span></div>
